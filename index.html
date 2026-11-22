@@ -2,249 +2,1195 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>West Bengal Land Expert</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1B7A3E">
+<meta name="description" content="পশ্চিমবঙ্গ জমি এক্সপার্ট — শতক, কাঠা, বিঘা কনভার্টার, জমি মাপা, জমি ভাগ, GPS সার্ভে, ম্যাপ ও রিপোর্ট।">
+<title>পশ্চিমবঙ্গ জমি এক্সপার্ট | West Bengal Land Expert</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
-  :root{
-    --green:#1B7A3E; --green-dark:#12582b; --gold:#F2B705; --red:#C62828;
-    --bg:#FFFBF2; --card:#ffffff; --tint:#E9F5EC; --text:#1A2A1F; --muted:#5b6b60;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:"Noto Sans Bengali","Hind Siliguri","Noto Sans Devanagari",system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
-  .wrap{max-width:560px;margin:0 auto;padding:0 16px 40px}
-  header{background:linear-gradient(135deg,var(--green),var(--green-dark));color:#fff;padding:14px 16px 28px;border-bottom:4px solid var(--gold);border-radius:0 0 24px 24px}
-  .langs{display:flex;gap:8px;justify-content:flex-end;max-width:560px;margin:0 auto 10px}
-  .langs button{border:1px solid rgba(255,255,255,.6);background:transparent;color:#fff;padding:6px 14px;border-radius:999px;font-size:14px;cursor:pointer;font-family:inherit}
-  .langs button.active{background:var(--gold);color:#222;border-color:var(--gold);font-weight:700}
-  .brand{max-width:560px;margin:0 auto;display:flex;align-items:center;gap:14px}
-  .logo{width:78px;height:78px;border-radius:50%;background:#fff;border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;flex:none}
-  .logo svg{width:52px;height:60px}
-  h1{margin:0;font-size:22px;line-height:1.25}
-  .tag{margin:4px 0 0;color:#e7f5ea;font-size:14px}
-  .dl{display:block;margin:20px 0 6px;background:var(--gold);color:#1d1d1d;text-align:center;text-decoration:none;font-weight:700;font-size:18px;padding:16px;border-radius:14px;box-shadow:0 4px 0 #c99700}
-  .dl:active{transform:translateY(2px);box-shadow:0 2px 0 #c99700}
-  .note{font-size:12.5px;color:var(--muted);text-align:center;margin:0 0 20px}
-  .card{background:var(--card);border:1px solid #e3eadf;border-radius:16px;padding:16px;margin:16px 0;box-shadow:0 2px 8px rgba(0,0,0,.04)}
-  .card h2{margin:0 0 4px;font-size:18px;color:var(--green)}
-  .card p.sub{margin:0 0 12px;font-size:13.5px;color:var(--muted)}
-  .row{display:flex;align-items:center;gap:10px;margin:8px 0}
-  .row label{flex:0 0 92px;font-weight:600;font-size:15px}
-  .row input{flex:1;min-width:0;font-size:18px;padding:10px 12px;border:2px solid #cfe2d3;border-radius:10px;background:var(--tint);font-family:inherit;color:var(--text)}
-  .row input:focus{outline:none;border-color:var(--green);background:#fff}
-  .rates{font-size:13px;color:var(--muted);margin-top:12px;background:#fff8e1;border-left:4px solid var(--gold);padding:8px 10px;border-radius:6px}
-  .clear{margin-top:10px;background:none;border:1px solid var(--green);color:var(--green);padding:8px 16px;border-radius:10px;font-family:inherit;font-size:14px;cursor:pointer}
-  ul.feat{list-style:none;padding:0;margin:0}
-  ul.feat li{padding:8px 0 8px 28px;position:relative;border-bottom:1px dashed #e3eadf;font-size:15px}
-  ul.feat li:last-child{border:none}
-  ul.feat li::before{content:"✔";position:absolute;left:0;color:var(--green);font-weight:700}
-  .soon{font-size:11px;background:var(--red);color:#fff;padding:1px 7px;border-radius:999px;margin-left:6px}
-  footer{text-align:center;font-size:12.5px;color:var(--muted);padding:10px 16px 30px}
-  .wave{height:6px;background:linear-gradient(90deg,var(--green),var(--gold),var(--red));border-radius:3px;margin-top:8px}
+:root{--g:#1B7A3E;--gd:#12582b;--y:#F2B705;--r:#C62828;--bg:#FFFBF2;--tint:#E9F5EC;--tx:#1A2A1F;--mu:#5b6b60;--bd:#cfe2d3}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Noto Sans Bengali","Hind Siliguri","Noto Sans Devanagari",system-ui,sans-serif;background:var(--bg);color:var(--tx);line-height:1.45;padding-bottom:84px}
+button{font-family:inherit;cursor:pointer}
+.view{display:none;max-width:640px;margin:0 auto}
+.view.active{display:block}
+.pad{padding:12px 14px}
+/* home */
+.hhead{display:flex;align-items:center;gap:10px;padding:12px 14px 6px}
+.logo{width:56px;height:56px;border-radius:50%;background:#fff;border:3px solid var(--y);display:flex;align-items:center;justify-content:center;flex:none}
+.logo svg{width:34px;height:40px}
+.hhead h1{margin:0;font-size:19px;line-height:1.2;color:var(--gd)}
+.hhead p{margin:2px 0 0;font-size:12.5px;color:var(--mu);font-style:italic}
+.langs{margin-left:auto;display:flex;flex-direction:column;gap:4px}
+.langs button{border:1px solid var(--g);background:#fff;color:var(--g);border-radius:999px;font-size:12px;padding:3px 10px}
+.langs button.on{background:var(--g);color:#fff}
+.banner{margin:8px 14px;border-radius:22px;padding:18px;color:#fff;background:linear-gradient(120deg,#1B7A3E 0%,#2e9a52 55%,#7cc06a 100%);display:flex;align-items:center;gap:8px;overflow:hidden;position:relative;min-height:170px}
+.banner:after{content:"";position:absolute;left:0;right:0;bottom:0;height:10px;background:linear-gradient(90deg,var(--y),#fff0,var(--r))}
+.banner .w{font-size:20px;font-weight:600}
+.banner .big{font-size:25px;font-weight:800;color:var(--y);line-height:1.15;margin:2px 0 6px}
+.banner .sol{font-size:13px;opacity:.95}
+.pill{margin-top:12px;background:#fff;color:var(--g);border:0;border-radius:999px;padding:9px 16px;font-weight:700;font-size:15px}
+.banner svg{width:96px;height:120px;flex:none;margin-left:auto;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25))}
+.sectitle{display:flex;align-items:center;gap:10px;margin:16px 14px 10px;color:var(--g)}
+.sectitle:before,.sectitle:after{content:"";flex:1;height:2px;background:var(--g);opacity:.5}
+.sectitle span{background:var(--g);color:#fff;font-weight:700;padding:7px 18px;border-radius:999px;font-size:15px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 14px}
+.tcard{display:flex;align-items:center;gap:8px;text-align:left;background:var(--tint);border:1.5px solid #bfe0c8;border-radius:16px;padding:12px 10px;color:var(--tx);min-height:76px}
+.tcard i{font-style:normal;font-size:30px;flex:none}
+.tcard b{display:block;font-size:14.5px;line-height:1.2}
+.tcard small{display:block;color:var(--mu);font-size:11.5px;line-height:1.25;margin-top:2px}
+.tcard .chev{margin-left:auto;background:var(--g);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex:none}
+.explore{margin:12px 14px;display:flex;align-items:center;gap:10px;background:linear-gradient(90deg,#e8f6e6,#f6fbe9);border:1.5px solid #bfe0c8;border-radius:16px;padding:14px;width:calc(100% - 28px);text-align:left}
+.explore i{font-style:normal;font-size:30px}
+.explore b{display:block;font-size:16px}
+.explore small{color:var(--mu);font-size:12px}
+.explore .go{margin-left:auto;background:var(--g);color:#fff;border-radius:999px;padding:8px 16px;font-weight:700}
+.wave{height:6px;margin:14px 14px 0;border-radius:3px;background:linear-gradient(90deg,var(--g),var(--y),var(--r))}
+/* sub pages */
+.topbar{display:flex;align-items:center;gap:10px;background:var(--g);color:#fff;padding:12px 14px;position:sticky;top:0;z-index:1000}
+.topbar button{background:rgba(255,255,255,.18);border:0;color:#fff;width:36px;height:36px;border-radius:50%;font-size:20px}
+.topbar h2{margin:0;font-size:18px}
+.card{background:#fff;border:1px solid #e3eadf;border-radius:16px;padding:14px;margin:12px 0;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.card h3{margin:0 0 6px;font-size:16px;color:var(--g)}
+.hint{font-size:13px;color:var(--mu);margin:4px 0 8px}
+.warn{background:#fff8e1;border-left:4px solid var(--y);padding:8px 10px;border-radius:6px;font-size:13px;margin:8px 0}
+.disc{background:#fdecea;border-left:4px solid var(--r);padding:8px 10px;border-radius:6px;font-size:12.5px;margin:10px 0}
+.tabs{display:flex;gap:6px;margin:10px 0}
+.tabs button{flex:1;border:1.5px solid var(--g);background:#fff;color:var(--g);padding:9px 4px;border-radius:10px;font-weight:700;font-size:14px}
+.tabs button.on{background:var(--g);color:#fff}
+.row{display:flex;align-items:center;gap:10px;margin:8px 0}
+.row label{flex:0 0 40%;font-weight:600;font-size:14.5px}
+.row input,.row select,select.f,input.f,textarea.f{flex:1;min-width:0;font-size:17px;padding:10px 12px;border:2px solid var(--bd);border-radius:10px;background:var(--tint);font-family:inherit;color:var(--tx);width:100%}
+select.f,input.f,textarea.f{margin:4px 0}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--g);background:#fff}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.btn{border:0;background:var(--g);color:#fff;padding:11px 16px;border-radius:12px;font-weight:700;font-size:15px}
+.btn.y{background:var(--y);color:#222}
+.btn.o{background:#fff;color:var(--g);border:1.5px solid var(--g)}
+.btn.r{background:#fff;color:var(--r);border:1.5px solid var(--r)}
+.btn.s{padding:7px 12px;font-size:13px}
+.btn.on{background:var(--y);color:#222}
+.btn:disabled{opacity:.5}
+.big-res{font-size:22px;font-weight:800;color:var(--gd);background:#fff8e1;border:2px solid var(--y);border-radius:12px;padding:10px 12px;margin:8px 0;text-align:center}
+.res-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.res-grid div{background:var(--tint);border-radius:10px;padding:7px 10px;display:flex;justify-content:space-between;gap:6px;font-size:14px}
+.res-grid span{color:var(--mu)}
+canvas.cv{width:100%;height:55vh;min-height:300px;background:#fff;border:2px solid var(--bd);border-radius:12px;touch-action:none;display:block}
+#map{height:60vh;min-height:320px;border-radius:12px;border:2px solid var(--bd);position:relative;z-index:0}
+.ptm{background:var(--y);border:2px solid var(--g);border-radius:50%}
+.list .it{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px dashed #dde6da;font-size:14px}
+.list .it:last-child{border:0}
+.dot{width:14px;height:14px;border-radius:50%;flex:none}
+.bar{display:flex;height:34px;border-radius:8px;overflow:hidden;margin:8px 0}
+.bar div{display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700}
+.pro{background:#fff;border:1px solid #e3eadf;border-radius:14px;padding:12px;margin:10px 0}
+.pro b{font-size:16px}
+.pro small{display:block;color:var(--mu)}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dgrid button{background:var(--tint);border:1.5px solid #bfe0c8;border-radius:12px;padding:12px;font-size:15px;color:var(--tx);text-align:left}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #dfe7dc;display:flex;z-index:1001;padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;border:0;background:none;padding:8px 0 6px;font-size:12px;color:var(--mu)}
+nav button i{display:block;font-style:normal;font-size:22px}
+nav button.on{color:var(--g);font-weight:800}
+#toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:#222;color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:2000;max-width:90%;text-align:center}
+#toast.on{opacity:.95}
+/* report paper */
+#reportPaper{background:#fff;border:1px solid #bbb;padding:18px;margin-top:10px;font-size:14px}
+#reportPaper h1{font-size:20px;margin:0 0 2px;color:var(--gd)}
+#reportPaper table{width:100%;border-collapse:collapse;margin:10px 0}
+#reportPaper td,#reportPaper th{border:1px solid #999;padding:6px 8px;text-align:left;font-size:13.5px}
+#reportPaper .sig{display:flex;justify-content:space-between;margin-top:46px;font-size:13px}
+#reportPaper .sig div{border-top:1px solid #333;padding-top:4px;width:44%;text-align:center}
+@media print{
+  body{padding:0;background:#fff}
+  body *{visibility:hidden}
+  #reportPaper,#reportPaper *{visibility:visible}
+  #reportPaper{position:absolute;left:0;top:0;width:100%;border:0;margin:0}
+}
 </style>
 </head>
 <body>
+<div id="toast"></div>
 
-<header>
-  <div class="langs">
-    <button data-lang="bn" class="active">বাংলা</button>
-    <button data-lang="hi">हिन्दी</button>
-    <button data-lang="en">English</button>
+<!-- ============ HOME ============ -->
+<section class="view active" id="v-home">
+  <div class="hhead">
+    <div class="logo"><svg viewBox="0 0 100 130"><path d="M48 4 L58 8 L66 6 L68 16 L60 22 L54 30 L56 40 L52 50 L58 58 L54 66 L46 70 L42 62 L36 58 L32 66 L34 76 L30 86 L24 94 L30 104 L38 110 L44 120 L54 126 L66 124 L78 118 L82 110 L74 104 L78 94 L72 86 L76 78 L68 70 L72 60 L66 52 L70 42 L64 34 L70 24 L64 14 Z" fill="#1B7A3E" stroke="#F2B705" stroke-width="4" stroke-linejoin="round"/></svg></div>
+    <div><h1 data-t="app"></h1><p data-t="tag"></p></div>
+    <div class="langs"><button data-l="0">বাংলা</button><button data-l="1">हिन्दी</button><button data-l="2">English</button></div>
   </div>
-  <div class="brand">
-    <div class="logo" aria-label="West Bengal map">
-      <!-- Placeholder West Bengal outline. Replace this <svg> with your designer's real logo/map (or an <img src="logo.png">). -->
-      <svg viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg">
-        <path d="M48 4 L58 8 L66 6 L68 16 L60 22 L54 30 L56 40 L52 50 L58 58 L54 66 L46 70 L42 62 L36 58 L32 66 L34 76 L30 86 L24 94 L30 104 L38 110 L44 120 L54 126 L66 124 L78 118 L82 110 L74 104 L78 94 L72 86 L76 78 L68 70 L72 60 L66 52 L70 42 L64 34 L70 24 L64 14 Z"
-              fill="#1B7A3E" stroke="#F2B705" stroke-width="3" stroke-linejoin="round"/>
-        <circle cx="52" cy="70" r="4" fill="#F2B705"/>
-      </svg>
-    </div>
+  <div class="banner">
     <div>
-      <h1 data-i18n="title"></h1>
-      <p class="tag" data-i18n="tagline"></p>
+      <div class="w" data-t="welcome"></div>
+      <div class="big" data-t="app"></div>
+      <div class="sol" data-t="solution"></div>
+      <button class="pill" onclick="openWB()"><span data-t="wbmap"></span> ›</button>
+    </div>
+    <svg viewBox="0 0 100 130"><path d="M48 4 L58 8 L66 6 L68 16 L60 22 L54 30 L56 40 L52 50 L58 58 L54 66 L46 70 L42 62 L36 58 L32 66 L34 76 L30 86 L24 94 L30 104 L38 110 L44 120 L54 126 L66 124 L78 118 L82 110 L74 104 L78 94 L72 86 L76 78 L68 70 L72 60 L66 52 L70 42 L64 34 L70 24 L64 14 Z" fill="#F2B705" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><circle cx="52" cy="72" r="5" fill="#1B7A3E"/></svg>
+  </div>
+  <div class="sectitle"><span>🛠 <span data-t="tools"></span></span></div>
+  <div class="grid">
+    <button class="tcard" onclick="go('mouza')"><i>🗺️</i><div><b data-t="mouza"></b><small data-t="mouza_d"></small></div><span class="chev">›</span></button>
+    <button class="tcard" onclick="go('gps')"><i>📡</i><div><b data-t="gps"></b><small data-t="gps_d"></small></div><span class="chev">›</span></button>
+    <button class="tcard" onclick="go('calc')"><i>🧮</i><div><b data-t="calc"></b><small data-t="calc_d"></small></div><span class="chev">›</span></button>
+    <button class="tcard" onclick="go('divide')"><i>✂️</i><div><b data-t="divide"></b><small data-t="divide_d"></small></div><span class="chev">›</span></button>
+    <button class="tcard" onclick="go('cad')"><i>📐</i><div><b data-t="cad"></b><small data-t="cad_d"></small></div><span class="chev">›</span></button>
+    <button class="tcard" onclick="go('report')"><i>📄</i><div><b data-t="report"></b><small data-t="report_d"></small></div><span class="chev">›</span></button>
+    <button class="tcard" onclick="go('layers')"><i>🛰️</i><div><b data-t="layers"></b><small data-t="layers_d"></small></div><span class="chev">›</span></button>
+    <button class="tcard" onclick="go('projects')"><i>📁</i><div><b data-t="projects"></b><small data-t="projects_d"></small></div><span class="chev">›</span></button>
+  </div>
+  <button class="explore" onclick="go('districts')"><i>📍</i><div><b data-t="explore"></b><small data-t="explore_d"></small></div><span class="go">›</span></button>
+  <div class="wave"></div>
+</section>
+
+<!-- ============ CALC ============ -->
+<section class="view" id="v-calc">
+  <div class="topbar"><button onclick="go('home')">←</button><h2 data-t="calc"></h2></div>
+  <div class="pad">
+    <div class="tabs"><button id="ct1" class="on" onclick="calcTab(1)" data-t="tab_conv"></button><button id="ct2" onclick="calcTab(2)" data-t="tab_area"></button></div>
+    <div id="calcA" class="card">
+      <h3 data-t="tab_conv"></h3>
+      <p class="hint" data-t="conv_sub"></p>
+      <div id="cvRows"></div>
+      <div class="btns"><button class="btn o s" onclick="convClear()" data-t="clear"></button></div>
+      <div class="warn" id="cvRates"></div>
+    </div>
+    <div id="calcB" class="card" style="display:none">
+      <h3 data-t="tab_area"></h3>
+      <select id="cShape" class="f"></select>
+      <div class="row"><label data-t="lenunit"></label><select id="cLen"><option value="ft" data-t="u_ft"></option><option value="m" data-t="u_m"></option><option value="hat" data-t="u_hat"></option></select></div>
+      <div id="cFields"></div>
+      <div id="cRes"></div>
+      <div class="btns"><button class="btn" onclick="calcSave()" data-t="save"></button><button class="btn y" onclick="toReport()" data-t="rep_btn"></button><button class="btn o" onclick="toDivide()" data-t="div_btn"></button></div>
     </div>
   </div>
-</header>
+</section>
 
-<div class="wrap">
+<!-- ============ DIVIDE ============ -->
+<section class="view" id="v-divide">
+  <div class="topbar"><button onclick="go('home')">←</button><h2 data-t="divide"></h2></div>
+  <div class="pad">
+    <div class="tabs"><button id="dt1" class="on" onclick="dvTab(1)" data-t="d_tab1"></button><button id="dt2" onclick="dvTab(2)" data-t="d_tab2"></button></div>
+    <div class="card">
+      <div id="dvSrcBox1">
+        <div class="row"><label data-t="d_total"></label><input id="dvTotal" inputmode="decimal" placeholder="0"><select id="dvUnit" style="flex:0 0 38%"><option value="shatak" data-t="shatak"></option><option value="katha" data-t="katha"></option><option value="bigha" data-t="bigha"></option><option value="acre" data-t="acre"></option><option value="sqft" data-t="sqft"></option></select></div>
+      </div>
+      <div id="dvSrcBox2" style="display:none">
+        <label class="hint" data-t="d_src"></label>
+        <select id="dvSrc" class="f"></select>
+      </div>
+      <select id="dvMode" class="f"><option value="equal" data-t="d_equal"></option><option value="pct" data-t="d_pct"></option><option value="cut" data-t="d_cut"></option></select>
+      <div id="dvEq" class="row"><label data-t="d_n"></label><input id="dvN" inputmode="numeric" value="2"></div>
+      <div id="dvPc" style="display:none"><label class="hint" data-t="d_pcts"></label><input id="dvPct" class="f" value="40,30,30"></div>
+      <div id="dvCt" style="display:none" class="row"><label data-t="d_cutamt"></label><input id="dvCut" inputmode="decimal" placeholder="0"><select id="dvCutU" style="flex:0 0 38%"><option value="shatak" data-t="shatak"></option><option value="katha" data-t="katha"></option><option value="bigha" data-t="bigha"></option><option value="acre" data-t="acre"></option><option value="sqft" data-t="sqft"></option></select></div>
+      <div id="dvAng" style="display:none"><label class="hint"><span data-t="d_angle"></span>: <b id="dvAngV">0</b>°</label><input id="dvAngle" type="range" min="0" max="179" value="0" style="width:100%"></div>
+    </div>
+    <div id="dvShapeBox" style="display:none"><canvas id="dvCanvas" class="cv" style="height:42vh;min-height:240px"></canvas></div>
+    <div class="card"><div id="dvBar"></div><div id="dvOut" class="list"></div></div>
+    <div class="disc" data-t="disc"></div>
+  </div>
+</section>
 
-  <!-- ====== APK LINK: replace the # below with your GitHub Release link ====== -->
-  <a id="apkBtn" class="dl" href="#" data-i18n="download"></a>
-  <p class="note" data-i18n="apkNote"></p>
+<!-- ============ GPS ============ -->
+<section class="view" id="v-gps">
+  <div class="topbar"><button onclick="go('home')">←</button><h2 data-t="gps"></h2></div>
+  <div class="pad">
+    <div class="card">
+      <p class="hint" data-t="g_hint"></p>
+      <div id="gStatus" class="warn"></div>
+      <div class="btns"><button class="btn" id="gStartBtn" onclick="gStart()" data-t="g_start"></button><button class="btn y" id="gAddBtn" onclick="gAdd()" data-t="g_add"></button><button class="btn o" onclick="gUndo()" data-t="undo"></button><button class="btn r" onclick="gClear()" data-t="clear"></button></div>
+    </div>
+    <canvas id="gCanvas" class="cv" style="height:40vh;min-height:240px"></canvas>
+    <div class="card"><div id="gRes"></div><div id="gList" class="list"></div>
+      <div class="btns"><button class="btn" onclick="gSave()" data-t="save"></button><button class="btn y" onclick="toReport()" data-t="rep_btn"></button><button class="btn o" onclick="toDivide()" data-t="div_btn"></button></div>
+    </div>
+    <div class="disc" data-t="disc"></div>
+  </div>
+</section>
 
-  <section class="card">
-    <h2 data-i18n="convTitle"></h2>
-    <p class="sub" data-i18n="convSub"></p>
-    <div id="rows"></div>
-    <div class="rates" id="rates"></div>
-    <button class="clear" id="clearBtn" data-i18n="clear"></button>
-  </section>
+<!-- ============ MOUZA ============ -->
+<section class="view" id="v-mouza">
+  <div class="topbar"><button onclick="go('home')">←</button><h2 data-t="mouza"></h2></div>
+  <div class="pad">
+    <div class="card">
+      <div class="btns">
+        <label class="btn y" style="display:inline-block">📷 <span data-t="m_up"></span><input id="mFile" type="file" accept="image/*" style="display:none"></label>
+        <button class="btn o" id="mbCal" onclick="mMode('calib')" data-t="m_calib"></button>
+        <button class="btn o" id="mbTr" onclick="mMode('trace')" data-t="m_trace"></button>
+      </div>
+      <div class="warn" id="mStep"></div>
+      <div id="mCalForm" style="display:none">
+        <div class="row"><label data-t="m_dist"></label><input id="mDist" inputmode="decimal" placeholder="0"><select id="mUnit" style="flex:0 0 40%"><option value="ft" data-t="u_ft"></option><option value="m" data-t="u_m"></option><option value="chain" data-t="u_chain"></option><option value="hat" data-t="u_hat"></option></select></div>
+        <div class="btns"><button class="btn" onclick="mSetScale()" data-t="m_set"></button></div>
+      </div>
+    </div>
+    <canvas id="mCanvas" class="cv"></canvas>
+    <div class="btns"><button class="btn o s" onclick="mZoom(1.3)">＋</button><button class="btn o s" onclick="mZoom(1/1.3)">－</button><button class="btn o s" onclick="mFit()" data-t="fit"></button><button class="btn o" onclick="mUndo()" data-t="undo"></button><button class="btn r" onclick="mClear()" data-t="clear"></button></div>
+    <div class="card"><div id="mRes"></div>
+      <div class="btns"><button class="btn" onclick="mSave()" data-t="save"></button><button class="btn y" onclick="toReport()" data-t="rep_btn"></button><button class="btn o" onclick="toDivide()" data-t="div_btn"></button></div>
+    </div>
+    <div class="disc" data-t="disc"></div>
+  </div>
+</section>
 
-  <section class="card">
-    <h2 data-i18n="featTitle"></h2>
-    <ul class="feat">
-      <li data-i18n="f1"></li>
-      <li data-i18n="f2"></li>
-      <li><span data-i18n="f3"></span><span class="soon" data-i18n="soon"></span></li>
-      <li><span data-i18n="f4"></span><span class="soon" data-i18n="soon"></span></li>
-      <li><span data-i18n="f5"></span><span class="soon" data-i18n="soon"></span></li>
-    </ul>
-  </section>
+<!-- ============ CAD ============ -->
+<section class="view" id="v-cad">
+  <div class="topbar"><button onclick="go('home')">←</button><h2 data-t="cad"></h2></div>
+  <div class="pad">
+    <div class="btns" id="cTools">
+      <button class="btn o s on" data-c="line" data-t="c_line"></button>
+      <button class="btn o s" data-c="poly" data-t="c_poly"></button>
+      <button class="btn o s" data-c="rect" data-t="c_rect"></button>
+      <button class="btn o s" data-c="circ" data-t="c_circ"></button>
+      <button class="btn o s" data-c="text" data-t="c_text"></button>
+    </div>
+    <div class="row" style="margin:4px 0"><label style="flex:0 0 34%"><span data-t="c_grid"></span></label><input id="cGrid" inputmode="decimal" value="5" style="flex:0 0 22%"><label style="flex:1;font-weight:400"><input type="checkbox" id="cSnap" checked style="width:auto"> <span data-t="c_snap"></span></label></div>
+    <div class="warn" id="cStep"></div>
+    <canvas id="cCanvas" class="cv"></canvas>
+    <div class="btns"><button class="btn o s" onclick="cZoom(1.3)">＋</button><button class="btn o s" onclick="cZoom(1/1.3)">－</button><button class="btn y s" onclick="cFinish()" data-t="c_finish"></button><button class="btn o" onclick="cUndo()" data-t="undo"></button><button class="btn r" onclick="cClear()" data-t="clear"></button></div>
+    <div class="card"><div id="cRes2"></div>
+      <div class="btns"><button class="btn" onclick="cSave()" data-t="save"></button><button class="btn o" onclick="cPNG()" data-t="c_png"></button><button class="btn o" onclick="cDXF()">DXF</button><button class="btn y" onclick="toReport()" data-t="rep_btn"></button></div>
+    </div>
+  </div>
+</section>
 
-</div>
+<!-- ============ REPORT ============ -->
+<section class="view" id="v-report">
+  <div class="topbar"><button onclick="go('home')">←</button><h2 data-t="report"></h2></div>
+  <div class="pad">
+    <div class="card">
+      <label class="hint" data-t="r_src"></label>
+      <select id="rSrc" class="f"></select>
+      <div id="rManual" style="display:none" class="row"><label data-t="d_total"></label><input id="rMan" inputmode="decimal" placeholder="0"><select id="rManU" style="flex:0 0 38%"><option value="shatak" data-t="shatak"></option><option value="katha" data-t="katha"></option><option value="bigha" data-t="bigha"></option><option value="acre" data-t="acre"></option><option value="sqft" data-t="sqft"></option></select></div>
+      <input id="rOwner" class="f" data-tp="r_owner">
+      <input id="rMouza" class="f" data-tp="r_mouza">
+      <input id="rThana" class="f" data-tp="r_thana">
+      <input id="rDist" class="f" data-tp="r_dist">
+      <input id="rDag" class="f" data-tp="r_dag">
+      <input id="rKh" class="f" data-tp="r_khatian">
+      <textarea id="rNotes" class="f" rows="2" data-tp="r_notes"></textarea>
+      <div class="btns"><button class="btn y" onclick="window.print()">🖨 <span data-t="r_print"></span></button></div>
+    </div>
+    <div id="reportPaper"></div>
+  </div>
+</section>
 
-<footer>
-  <div class="wave"></div>
-  <p data-i18n="footer"></p>
-</footer>
+<!-- ============ LAYERS (MAP) ============ -->
+<section class="view" id="v-layers">
+  <div class="topbar"><button onclick="go('home')">←</button><h2 data-t="layers"></h2></div>
+  <div class="pad">
+    <p class="hint" data-t="l_hint"></p>
+    <div class="btns">
+      <button class="btn y s" id="lDrawBtn" onclick="lToggle()" data-t="l_draw"></button>
+      <button class="btn o s" onclick="lLocate()" data-t="l_loc"></button>
+      <button class="btn o s" onclick="openWB()" data-t="l_wb"></button>
+      <button class="btn o s" onclick="lUndo()" data-t="undo"></button>
+      <button class="btn r s" onclick="lClear()" data-t="clear"></button>
+    </div>
+    <div id="mapMsg" class="warn" style="display:none"></div>
+    <div id="map"></div>
+    <div class="card"><div id="lRes"></div>
+      <div class="btns"><button class="btn" onclick="lSave()" data-t="save"></button><button class="btn y" onclick="toReport()" data-t="rep_btn"></button><button class="btn o" onclick="toDivide()" data-t="div_btn"></button></div>
+    </div>
+    <div class="disc" data-t="disc"></div>
+  </div>
+</section>
+
+<!-- ============ DISTRICTS ============ -->
+<section class="view" id="v-districts">
+  <div class="topbar"><button onclick="go('home')">←</button><h2 data-t="explore"></h2></div>
+  <div class="pad">
+    <div class="dgrid" id="distList"></div>
+    <div class="card"><a href="https://banglarbhumi.gov.in" target="_blank" rel="noopener" class="btn y" style="display:inline-block;text-decoration:none" data-t="s_land"></a></div>
+  </div>
+</section>
+
+<!-- ============ PROJECTS ============ -->
+<section class="view" id="v-projects">
+  <div class="topbar"><button onclick="go('home')">←</button><h2 data-t="projects"></h2></div>
+  <div class="pad">
+    <div id="projList"></div>
+    <div class="btns"><button class="btn o" onclick="exportAll()" data-t="p_export"></button></div>
+  </div>
+</section>
+
+<!-- ============ SETTINGS ============ -->
+<section class="view" id="v-settings">
+  <div class="topbar"><button onclick="go('home')">←</button><h2 data-t="settings"></h2></div>
+  <div class="pad">
+    <div class="card">
+      <h3 data-t="s_lang"></h3>
+      <div class="tabs" id="sLang"><button data-l="0">বাংলা</button><button data-l="1">हिन्दी</button><button data-l="2">English</button></div>
+    </div>
+    <div class="card">
+      <h3 data-t="s_units"></h3>
+      <div class="row"><label data-t="s_sqft"></label><input id="sSqft" inputmode="decimal"></div>
+      <div class="row"><label data-t="s_katha"></label><input id="sKatha" inputmode="decimal"></div>
+      <div class="row"><label data-t="s_bigha"></label><input id="sBigha" inputmode="decimal"></div>
+      <div class="row"><label data-t="s_acre"></label><input id="sAcre" inputmode="decimal"></div>
+      <div class="row"><label data-t="s_chh"></label><input id="sChh" inputmode="decimal"></div>
+      <div class="row"><label data-t="s_len"></label><select id="sLen"><option value="ft" data-t="u_ft"></option><option value="m" data-t="u_m"></option></select></div>
+    </div>
+    <div class="card">
+      <div class="disc" data-t="disc"></div>
+      <a href="https://banglarbhumi.gov.in" target="_blank" rel="noopener" data-t="s_land"></a>
+      <div class="btns"><button class="btn r" onclick="resetAll()" data-t="s_reset"></button></div>
+    </div>
+  </div>
+</section>
+
+<nav id="nav">
+  <button data-go="home" onclick="go('home')"><i>🏠</i><span data-t="home"></span></button>
+  <button data-go="layers" onclick="go('layers')"><i>🗺️</i><span data-t="maps"></span></button>
+  <button data-go="projects" onclick="go('projects')"><i>📁</i><span data-t="n_proj"></span></button>
+  <button data-go="settings" onclick="go('settings')"><i>⚙️</i><span data-t="settings"></span></button>
+</nav>
 
 <script>
-/* =====================================================
-   MAP (UNIT) SETTINGS: change values here, everything updates automatically
-   ===================================================== */
-const CONFIG = {
-  SQFT_PER_SHATAK: 435.6,   // 1 শতক = 435.6 sq ft
-  SHATAK_PER_KATHA: 2,      // 1 কাঠা = 2 শতক
-  KATHA_PER_BIGHA: 20,      // 1 বিঘা = 20 কাঠা  (= 40 শতক)
-  SHATAK_PER_ACRE: 100,     // 1 একর = 100 শতক
-  CHHATAK_PER_KATHA: null   // ছটাক: put a number here (e.g. 16) to switch it on; null = hidden
-};
-
-/* ---------- derived: everything is measured in শতক ---------- */
-const shatakPer = {
-  bigha:  CONFIG.SHATAK_PER_KATHA * CONFIG.KATHA_PER_BIGHA,
-  katha:  CONFIG.SHATAK_PER_KATHA,
-  shatak: 1,
-  acre:   CONFIG.SHATAK_PER_ACRE,
-  sqft:   1 / CONFIG.SQFT_PER_SHATAK
-};
-if (CONFIG.CHHATAK_PER_KATHA) {
-  shatakPer.chhatak = CONFIG.SHATAK_PER_KATHA / CONFIG.CHHATAK_PER_KATHA;
-}
-
-/* ---------- translations ---------- */
-const T = {
-  bn:{
-    title:"পশ্চিমবঙ্গ জমি এক্সপার্ট", tagline:"জমি মাপুন, নিশ্চিন্তে",
-    download:"⬇ অ্যাপ ডাউনলোড করুন (APK)",
-    apkNote:"ফোনে ইনস্টলের সময় “অজানা উৎস” থেকে ইনস্টলের অনুমতি দিতে হতে পারে।",
-    convTitle:"জমির মাপ কনভার্টার", convSub:"যেকোনো একটি ঘরে সংখ্যা লিখুন, বাকি সব নিজে থেকে হিসাব হবে।",
-    bigha:"বিঘা", katha:"কাঠা", shatak:"শতক", acre:"একর", sqft:"বর্গফুট", chhatak:"ছটাক",
-    clear:"সব মুছুন",
-    ratesLabel:"ব্যবহৃত হিসাব:",
-    r_bigha:"১ বিঘা = {a} কাঠা = {b} শতক", r_katha:"১ কাঠা = {a} শতক",
-    r_shatak:"১ শতক = {a} বর্গফুট", r_acre:"১ একর = {a} শতক", r_chhatak:"১ কাঠা = {a} ছটাক",
-    featTitle:"অ্যাপে যা থাকছে",
-    f1:"শতক-কাঠা-বিঘা অটো কনভার্টার", f2:"জমির ক্ষেত্রফল ক্যালকুলেটর",
-    f3:"মৌজা ম্যাপে জমি মাপা", f4:"সমান ভাগে জমি ভাগ", f5:"GPS দিয়ে জমি মাপা ও PDF রিপোর্ট",
-    soon:"শীঘ্রই",
-    footer:"© পশ্চিমবঙ্গ জমি এক্সপার্ট — পরীক্ষামূলক সংস্করণ"
-  },
-  hi:{
-    title:"पश्चिम बंगाल लैंड एक्सपर्ट", tagline:"ज़मीन मापें, भरोसे के साथ",
-    download:"⬇ ऐप डाउनलोड करें (APK)",
-    apkNote:"फ़ोन में इंस्टॉल करते समय “अज्ञात स्रोत” से इंस्टॉल की अनुमति देनी पड़ सकती है।",
-    convTitle:"ज़मीन माप कन्वर्टर", convSub:"किसी भी खाने में संख्या लिखें, बाकी अपने-आप गिन जाएंगे।",
-    bigha:"बीघा", katha:"कट्ठा", shatak:"शतक", acre:"एकड़", sqft:"वर्ग फुट", chhatak:"छटाक",
-    clear:"सब मिटाएं",
-    ratesLabel:"इस्तेमाल किए गए हिसाब:",
-    r_bigha:"1 बीघा = {a} कट्ठा = {b} शतक", r_katha:"1 कट्ठा = {a} शतक",
-    r_shatak:"1 शतक = {a} वर्ग फुट", r_acre:"1 एकड़ = {a} शतक", r_chhatak:"1 कट्ठा = {a} छटाक",
-    featTitle:"ऐप में क्या होगा",
-    f1:"शतक-कट्ठा-बीघा ऑटो कन्वर्टर", f2:"ज़मीन क्षेत्रफल कैलकुलेटर",
-    f3:"मौजा नक्शे पर ज़मीन मापना", f4:"बराबर हिस्सों में ज़मीन बाँटना", f5:"GPS से ज़मीन मापना और PDF रिपोर्ट",
-    soon:"जल्द आ रहा है",
-    footer:"© पश्चिम बंगाल लैंड एक्सपर्ट — परीक्षण संस्करण"
-  },
-  en:{
-    title:"West Bengal Land Expert", tagline:"Measure your land with confidence",
-    download:"⬇ Download the App (APK)",
-    apkNote:"When installing on your phone you may need to allow installs from “unknown sources”.",
-    convTitle:"Land Unit Converter", convSub:"Type a number in any box and all the others update automatically.",
-    bigha:"Bigha", katha:"Katha", shatak:"Shatak", acre:"Acre", sqft:"Sq. ft", chhatak:"Chhatak",
-    clear:"Clear all",
-    ratesLabel:"Conversion rates used:",
-    r_bigha:"1 Bigha = {a} Katha = {b} Shatak", r_katha:"1 Katha = {a} Shatak",
-    r_shatak:"1 Shatak = {a} sq ft", r_acre:"1 Acre = {a} Shatak", r_chhatak:"1 Katha = {a} Chhatak",
-    featTitle:"What's in the app",
-    f1:"Shatak–Katha–Bigha auto converter", f2:"Land area calculator",
-    f3:"Measure plots on the Mouza map", f4:"Divide land into equal parts", f5:"GPS field survey and PDF report",
-    soon:"Coming soon",
-    footer:"© West Bengal Land Expert — test version"
+/* ======================================================================
+   GEOMETRY (pure functions)
+   ====================================================================== */
+//#GEO-START
+function polyArea(p){let a=0;for(let i=0;i<p.length;i++){const j=(i+1)%p.length;a+=p[i][0]*p[j][1]-p[j][0]*p[i][1];}return Math.abs(a)/2;}
+function polyPerim(p){let s=0;for(let i=0;i<p.length;i++){const j=(i+1)%p.length;s+=Math.hypot(p[j][0]-p[i][0],p[j][1]-p[i][1]);}return s;}
+function clipHalf(poly,nx,ny,d,keepLess){
+  const out=[];const f=p=>(p[0]*nx+p[1]*ny-d)*(keepLess?-1:1);
+  for(let i=0;i<poly.length;i++){
+    const a=poly[i],b=poly[(i+1)%poly.length],fa=f(a),fb=f(b);
+    if(fa>=0)out.push(a);
+    if((fa>=0)!==(fb>=0)){const k=fa/(fa-fb);out.push([a[0]+(b[0]-a[0])*k,a[1]+(b[1]-a[1])*k]);}
   }
-};
-
-let lang = "bn";
-try { lang = localStorage.getItem("wbLang") || "bn"; } catch(e){}
-
-/* ---------- number helpers ---------- */
-const digitMap = {"০":0,"১":1,"২":2,"৩":3,"৪":4,"৫":5,"৬":6,"৭":7,"৮":8,"৯":9,
-                  "०":0,"१":1,"२":2,"३":3,"४":4,"५":5,"६":6,"७":7,"८":8,"९":9};
-function parseNum(s){
-  s = String(s).replace(/[০-৯०-९]/g, d => digitMap[d]).replace(/,/g,"").trim();
-  const n = parseFloat(s);
-  return isNaN(n) ? null : n;
+  return out;
 }
-function fmt(n){
-  if (n === null) return "";
-  const r = Math.round(n * 10000) / 10000;
-  return String(r);
+function areaBelow(poly,nx,ny,d){const c=clipHalf(poly,nx,ny,d,true);return c.length<3?0:polyArea(c);}
+function divideByFractions(poly,fr,angDeg){
+  const th=angDeg*Math.PI/180,nx=Math.cos(th),ny=Math.sin(th);
+  const proj=poly.map(p=>p[0]*nx+p[1]*ny);
+  const lo=Math.min(...proj),hi=Math.max(...proj);
+  const A=polyArea(poly);const cuts=[lo];let acc=0;
+  for(let i=0;i<fr.length-1;i++){
+    acc+=fr[i];const target=A*acc;let l=lo,h=hi;
+    for(let k=0;k<60;k++){const m=(l+h)/2;if(areaBelow(poly,nx,ny,m)<target)l=m;else h=m;}
+    cuts.push((l+h)/2);
+  }
+  cuts.push(hi);
+  const parts=[];
+  for(let i=0;i<fr.length;i++){
+    let q=clipHalf(poly,nx,ny,cuts[i],false);q=clipHalf(q,nx,ny,cuts[i+1],true);
+    parts.push({poly:q,area:q.length<3?0:polyArea(q)});
+  }
+  return {parts,cuts,nx,ny};
 }
-function localNum(n){
-  const s = String(n);
-  if (lang === "bn") return s.replace(/\d/g, d => "০১২৩৪৫৬৭৮৯"[d]);
-  if (lang === "hi") return s.replace(/\d/g, d => "०१२३४५६७८९"[d]);
+function toXY(pts){
+  const la0=pts[0].lat*Math.PI/180,kx=111320*Math.cos(la0),ky=110574;
+  return pts.map(p=>[(p.lon-pts[0].lon)*kx,(p.lat-pts[0].lat)*ky]);
+}
+function heron(a,b,c){const s=(a+b+c)/2,v=s*(s-a)*(s-b)*(s-c);return v>0?Math.sqrt(v):NaN;}
+//#GEO-END
+
+/* ======================================================================
+   HELPERS, SETTINGS, TRANSLATIONS
+   ====================================================================== */
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+const FT=0.3048,SQM2SQFT=10.7639104;
+const LF_FACTOR={ft:FT,m:1,hat:0.4572,chain:20.1168};
+let S=Object.assign({lang:0,sqft:435.6,katha:2,bigha:20,acre:100,chh:0,len:'ft'},store.get('wb_settings',{}));
+function saveS(){store.set('wb_settings',S);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function toast(m){const e=$('#toast');e.textContent=m;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),2300);}
+
+const T={};
+function D(k,bn,hi,en){T[k]=[bn,hi,en];}
+function t(k){const a=T[k];return a?(a[S.lang]||a[2]):k;}
+D('app','পশ্চিমবঙ্গ জমি এক্সপার্ট','पश्चिम बंगाल लैंड एक्सपर्ट','West Bengal Land Expert');
+D('tag','জমি সার্ভে ও ম্যাপিং','ज़मीन सर्वे और मैपिंग','Land Survey & Mapping');
+D('welcome','স্বাগতম','स्वागत है','Welcome to');
+D('solution','আপনার সম্পূর্ণ জমি মাপার সমাধান','आपका संपूर्ण ज़मीन माप समाधान','Your complete land measurement solution');
+D('wbmap','পশ্চিমবঙ্গ ম্যাপ','पश्चिम बंगाल मैप','West Bengal Map');
+D('tools','জমি মাপার টুল','ज़मीन माप टूल','Land Measurement Tools');
+D('mouza','মৌজা ম্যাপ','मौजा नक्शा','Mouza Map');
+D('mouza_d','ম্যাপের ছবিতে ট্রেস করে মাপুন','नक्शे की फोटो पर ट्रेस करें','Trace on a map photo');
+D('gps','GPS সার্ভে','GPS सर्वे','GPS Survey');
+D('gps_d','মাঠে হেঁটে জমি মাপুন','खेत में चलकर ज़मीन मापें','Walk the field to measure');
+D('calc','জমির পরিমাপ','ज़मीन का माप','Land Calculator');
+D('calc_d','কনভার্টার ও ক্ষেত্রফল','कन्वर्टर और क्षेत्रफल','Converter & area');
+D('divide','জমি ভাগ','ज़मीन बँटवारा','Land Division');
+D('divide_d','সমান বা শতাংশে ভাগ','बराबर या प्रतिशत में बाँटें','Split equally or by %');
+D('cad','নকশা তৈরি','नक्शा बनाएँ','CAD Drawing');
+D('cad_d','প্লটের নকশা আঁকুন','प्लॉट का नक्शा बनाएँ','Draw a plot plan');
+D('report','রিপোর্ট (PDF)','रिपोर्ट (PDF)','PDF Report');
+D('report_d','প্রিন্ট বা PDF সেভ','प्रिंट या PDF सेव','Print or save PDF');
+D('layers','ম্যাপ লেয়ার','मैप लेयर','Map Layers');
+D('layers_d','স্যাটেলাইট ম্যাপে মাপুন','सैटेलाइट मैप पर मापें','Measure on satellite map');
+D('projects','আমার প্রজেক্ট','मेरे प्रोजेक्ट','My Projects');
+D('projects_d','সংরক্ষিত জমি','सहेजी गई ज़मीन','Saved land');
+D('explore','জেলা অনুযায়ী ম্যাপ','जिले के अनुसार मैप','Explore Districts');
+D('explore_d','জেলা বেছে ম্যাপে দেখুন','जिला चुनकर मैप देखें','Pick a district on the map');
+D('home','হোম','होम','Home');D('maps','ম্যাপ','मैप','Maps');D('n_proj','প্রজেক্ট','प्रोजेक्ट','Projects');D('settings','সেটিংস','सेटिंग्स','Settings');
+D('bigha','বিঘা','बीघा','Bigha');D('katha','কাঠা','कट्ठा','Katha');D('shatak','শতক','शतक','Shatak');D('acre','একর','एकड़','Acre');
+D('sqft','বর্গফুট','वर्ग फुट','Sq ft');D('sqm','বর্গমিটার','वर्ग मीटर','Sq m');D('chhatak','ছটাক','छटाक','Chhatak');
+D('u_ft','ফুট','फ़ुट','Feet');D('u_m','মিটার','मीटर','Meters');D('u_chain','চেইন (৬৬ ফুট)','चेन (66 फ़ुट)','Chain (66 ft)');D('u_hat','হাত (১.৫ ফুট)','हाथ (1.5 फ़ुट)','Hat (1.5 ft)');
+D('ft_s','ফুট','फ़ुट','ft');D('m_s','মি.','मी.','m');
+D('save','সংরক্ষণ','सहेजें','Save');D('clear','মুছুন','मिटाएँ','Clear');D('undo','পূর্বাবস্থা','पूर्ववत','Undo');D('fit','ফিট','फ़िट','Fit');
+D('rep_btn','রিপোর্ট','रिपोर्ट','Report');D('div_btn','ভাগ করুন','बाँटें','Divide');
+D('saved','সংরক্ষিত হয়েছে ✔','सहेज लिया ✔','Saved ✔');D('nothing','আগে জমি মাপুন','पहले ज़मीन मापें','Measure land first');
+D('proj_name','প্রজেক্টের নাম দিন','प्रोजेक्ट का नाम दें','Project name');
+D('disc','এটি আনুমানিক মাপ। দলিল বা বেচাকেনার জন্য সরকারি আমিনের মাপই চূড়ান্ত।','यह अनुमानित माप है। दस्तावेज़ या खरीद-बिक्री के लिए सरकारी अमीन का माप ही अंतिम है।','This is an approximate measurement. For deeds or sale, the government amin\u2019s survey is final.');
+D('need_net','ম্যাপের জন্য ইন্টারনেট লাগবে।','मैप के लिए इंटरनेट चाहिए।','The map needs an internet connection.');
+D('tab_conv','কনভার্টার','कन्वर्टर','Converter');D('tab_area','ক্ষেত্রফল','क्षेत्रफल','Area');
+D('conv_sub','যেকোনো ঘরে সংখ্যা লিখুন, বাকি সব নিজে থেকে হিসাব হবে।','किसी भी खाने में संख्या लिखें, बाकी अपने-आप गिन जाएंगे।','Type in any box; all others update automatically.');
+D('rates','ব্যবহৃত হিসাব','इस्तेमाल किए गए हिसाब','Rates used');
+D('lenunit','দৈর্ঘ্যের একক','लंबाई की इकाई','Length unit');
+D('sh_rect','আয়তক্ষেত্র','आयत','Rectangle');D('sh_tri3','ত্রিভুজ (তিন বাহু)','त्रिभुज (तीन भुजा)','Triangle (3 sides)');
+D('sh_tribh','ত্রিভুজ (ভূমি ও উচ্চতা)','त्रिभुज (आधार व ऊँचाई)','Triangle (base & height)');D('sh_trap','ট্র্যাপিজিয়াম','समलंब','Trapezium');
+D('sh_circle','বৃত্ত','वृत्त','Circle');D('sh_quad','চতুর্ভুজ (চার বাহু ও কর্ণ)','चतुर्भुज (चार भुजा व विकर्ण)','Quadrilateral (4 sides + diagonal)');
+D('len','দৈর্ঘ্য','लंबाई','Length');D('wid','প্রস্থ','चौड़ाई','Width');D('sideA','বাহু ক','भुजा क','Side A');D('sideB','বাহু খ','भुजा ख','Side B');D('sideC','বাহু গ','भुजा ग','Side C');
+D('base','ভূমি','आधार','Base');D('height','উচ্চতা','ऊँचाई','Height');D('par1','সমান্তরাল বাহু ১','समानांतर भुजा 1','Parallel side 1');D('par2','সমান্তরাল বাহু ২','समानांतर भुजा 2','Parallel side 2');
+D('radius','ব্যাসার্ধ','त्रिज्या','Radius');D('side1','বাহু ১','भुजा 1','Side 1');D('side2','বাহু ২','भुजा 2','Side 2');D('side3','বাহু ৩','भुजा 3','Side 3');D('side4','বাহু ৪','भुजा 4','Side 4');D('diag','কর্ণ','विकर्ण','Diagonal');
+D('c_invalid','মাপ মেলেনি, সংখ্যাগুলো আবার দেখুন।','माप नहीं मिला, संख्याएँ फिर जाँचें।','These sides don\u2019t form a valid shape. Check the numbers.');
+D('d_tab1','সংখ্যা দিয়ে','संख्या से','By number');D('d_tab2','আকৃতির ওপর','आकृति पर','On shape');
+D('d_total','মোট জমি','कुल ज़मीन','Total land');D('d_equal','সমান ভাগ','बराबर हिस्से','Equal parts');D('d_pct','শতাংশে ভাগ','प्रतिशत में बाँटें','By percentage');D('d_cut','নির্দিষ্ট পরিমাণ কাটুন','तय माप काटें','Cut a fixed area');
+D('d_n','কত ভাগ','कितने हिस्से','No. of parts');D('d_pcts','শতাংশ (কমা দিয়ে, যেমন 40,30,30)','प्रतिशत (कॉमा से, जैसे 40,30,30)','Percentages (comma separated, e.g. 40,30,30)');
+D('d_cutamt','কত কাটবেন','कितना काटें','Cut amount');D('d_part','অংশ','हिस्सा','Part');D('d_rest','বাকি','बचा','Remaining');
+D('d_src','জমি বেছে নিন','ज़मीन चुनें','Choose land');D('d_angle','ভাগের দিক','बँटवारे की दिशा','Split direction');
+D('d_nosrc','আগে কোনো টুলে জমি মাপুন বা প্রজেক্ট সেভ করুন।','पहले किसी टूल में ज़मीन मापें या प्रोजेक्ट सहेजें।','Measure land in a tool first, or save a project.');
+D('d_err_pct','শতাংশের যোগফল ১০০-এর বেশি হয়ে গেছে।','प्रतिशत का जोड़ 100 से ज़्यादा है।','Percentages add up to more than 100.');
+D('d_err_cut','কাটার পরিমাণ মোট জমির চেয়ে কম হতে হবে।','काटने का माप कुल ज़मीन से कम होना चाहिए।','The cut must be smaller than the total.');
+D('d_err_n','ভাগের সংখ্যা ২ থেকে ২০ এর মধ্যে দিন।','हिस्सों की संख्या 2 से 20 के बीच दें।','Enter 2 to 20 parts.');
+D('g_start','GPS চালু করুন','GPS चालू करें','Start GPS');D('g_add','কোণা যোগ করুন','कोना जोड़ें','Add corner');
+D('g_hint','জমির প্রতিটি কোণায় দাঁড়িয়ে "কোণা যোগ করুন" চাপুন। ৬ সেকেন্ড স্থির থাকুন, খোলা আকাশের নিচে মাপুন।','ज़मीन के हर कोने पर खड़े होकर "कोना जोड़ें" दबाएँ। 6 सेकंड स्थिर रहें, खुले आसमान के नीचे मापें।','Stand on each corner and tap "Add corner". Stay still for 6 seconds, outdoors under open sky.');
+D('g_idle','GPS বন্ধ আছে। "GPS চালু করুন" চাপুন।','GPS बंद है। "GPS चालू करें" दबाएँ।','GPS is off. Tap "Start GPS".');
+D('g_wait','লোকেশন পাওয়ার অপেক্ষা…','लोकेशन का इंतज़ार…','Waiting for location…');
+D('g_none','এই ব্রাউজারে GPS পাওয়া যাচ্ছে না।','इस ब्राउज़र में GPS उपलब्ध नहीं।','GPS is not available in this browser.');
+D('g_err','লোকেশনের অনুমতি দিন বা ফোনের GPS চালু করুন।','लोकेशन की अनुमति दें या फ़ोन का GPS चालू करें।','Allow location access and turn on phone GPS.');
+D('g_acc','নির্ভুলতা','सटीकता','Accuracy');D('g_avg','গড় নিচ্ছি','औसत ले रहे हैं','Averaging');D('g_corner','কোণা','कोना','Corner');
+D('g_errpct','ভুলের সম্ভাব্য সীমা','संभावित त्रुटि','Possible error');D('perim','পরিসীমা','परिधि','Perimeter');D('g_need3','ক্ষেত্রফলের জন্য কমপক্ষে ৩টি কোণা লাগবে।','क्षेत्रफल के लिए कम से कम 3 कोने चाहिए।','At least 3 corners are needed for an area.');
+D('m_up','ম্যাপের ছবি','नक्शे की फोटो','Map photo');D('m_calib','স্কেল সেট','स्केल सेट','Set scale');D('m_trace','সীমানা আঁকুন','सीमा बनाएँ','Trace plot');
+D('m_noimg','"ম্যাপের ছবি" চেপে মৌজা ম্যাপের ছবি বেছে নিন।','"नक्शे की फोटो" दबाकर मौजा नक्शे की फोटो चुनें।','Tap "Map photo" and choose a picture of the mouza map.');
+D('m_s1','ধাপ ১: ম্যাপে জানা দূরত্বের একটি প্রান্তে ট্যাপ করুন।','चरण 1: नक्शे में ज्ञात दूरी के एक सिरे पर टैप करें।','Step 1: Tap one end of a known distance on the map.');
+D('m_s1b','এবার অন্য প্রান্তে ট্যাপ করুন (ভুল হলে আবার ট্যাপ করুন), তারপর দূরত্ব লিখুন।','अब दूसरे सिरे पर टैप करें, फिर दूरी लिखें।','Now tap the other end, then enter the real distance.');
+D('m_s1c','নিচে দূরত্ব লিখে "স্কেল সেট করুন" চাপুন।','नीचे दूरी लिखकर "स्केल सेट करें" दबाएँ।','Enter the distance below and tap "Set scale".');
+D('m_s2','ধাপ ২: জমির কোণায় কোণায় ট্যাপ করে সীমানা আঁকুন। দুই আঙুলে জুম করুন।','चरण 2: ज़मीन के कोनों पर टैप करके सीमा बनाएँ। दो उँगलियों से ज़ूम करें।','Step 2: Tap each corner of the plot. Pinch with two fingers to zoom.');
+D('m_dist','জানা দূরত্ব','ज्ञात दूरी','Known distance');D('m_set','স্কেল সেট করুন','स्केल सेट करें','Set scale');
+D('m_noscale','আগে স্কেল সেট করুন, তারপর ক্ষেত্রফল দেখাবে।','पहले स्केल सेट करें, फिर क्षेत्रफल दिखेगा।','Set the scale first to see the area.');
+D('m_ok','স্কেল সেট হয়েছে ✔','स्केल सेट हो गया ✔','Scale set ✔');D('side','বাহু','भुजा','Side');
+D('c_line','রেখা','रेखा','Line');D('c_poly','বহুভুজ','बहुभुज','Polygon');D('c_rect','আয়ত','आयत','Rectangle');D('c_circ','বৃত্ত','वृत्त','Circle');D('c_text','লেখা','लिखें','Text');
+D('c_finish','শেষ করুন','पूरा करें','Finish');D('c_grid','গ্রিড','ग्रिड','Grid');D('c_snap','স্ন্যাপ','स्नैप','Snap');D('c_png','ছবি (PNG)','फोटो (PNG)','Image (PNG)');
+D('c_enter','লেখাটি দিন','टेक्स्ट लिखें','Enter text');
+D('c_h_line','দুটি বিন্দুতে ট্যাপ করে রেখা টানুন।','दो बिंदुओं पर टैप करके रेखा खींचें।','Tap two points to draw a line.');
+D('c_h_poly','কোণায় কোণায় ট্যাপ করুন, শেষে "শেষ করুন" চাপুন (৩+ বিন্দুতে বন্ধ আকৃতি)।','कोनों पर टैप करें, अंत में "पूरा करें" दबाएँ (3+ बिंदु पर बंद आकृति)।','Tap each corner then "Finish" (3+ points make a closed shape).');
+D('c_h_rect','দুটি বিপরীত কোণায় ট্যাপ করুন।','दो विपरीत कोनों पर टैप करें।','Tap two opposite corners.');
+D('c_h_circ','কেন্দ্রে ট্যাপ করুন, তারপর পরিধির একটি বিন্দুতে।','केंद्र पर टैप करें, फिर परिधि के एक बिंदु पर।','Tap the centre, then a point on the edge.');
+D('c_h_text','যেখানে লিখতে চান সেখানে ট্যাপ করুন।','जहाँ लिखना हो वहाँ टैप करें।','Tap where you want the text.');
+D('c_none','কোনো বন্ধ আকৃতি নেই।','कोई बंद आकृति नहीं।','No closed shape yet.');
+D('r_src','কোন মাপের রিপোর্ট?','किस माप की रिपोर्ट?','Which measurement?');D('r_last','সর্বশেষ মাপ','आख़िरी माप','Latest measurement');D('r_manual','হাতে লিখে দেব','खुद लिखूँगा','Enter manually');
+D('r_owner','মালিকের নাম','मालिक का नाम','Owner name');D('r_mouza','মৌজা','मौजा','Mouza');D('r_thana','থানা','थाना','Police station');D('r_dist','জেলা','ज़िला','District');
+D('r_dag','দাগ নং','दाग नं.','Dag no.');D('r_khatian','খতিয়ান নং','खतियान नं.','Khatian no.');D('r_notes','মন্তব্য','टिप्पणी','Notes');
+D('r_print','প্রিন্ট / PDF সেভ','प्रिंट / PDF सेव','Print / Save PDF');D('r_title','জমির মাপের রিপোর্ট','ज़मीन माप रिपोर्ट','Land Measurement Report');
+D('r_area','ক্ষেত্রফল','क्षेत्रफल','Area');D('r_sign1','জমির মালিক','ज़मीन मालिक','Land owner');D('r_sign2','আমিন / সার্ভেয়ার','अमीन / सर्वेयर','Amin / Surveyor');D('r_date','তারিখ','तारीख','Date');
+D('r_noarea','কোনো মাপ নেই। আগে কোনো টুলে জমি মাপুন।','कोई माप नहीं। पहले किसी टूल में ज़मीन मापें।','No measurement. Measure land in a tool first.');
+D('l_draw','মাপা শুরু','मापना शुरू','Start measuring');D('l_stop','মাপা বন্ধ','मापना बंद','Stop measuring');D('l_loc','আমার অবস্থান','मेरी लोकेशन','My location');D('l_wb','পশ্চিমবঙ্গ','पश्चिम बंगाल','West Bengal');
+D('l_hint','"মাপা শুরু" চেপে স্যাটেলাইট ম্যাপে জমির কোণায় ট্যাপ করুন। বিন্দু টেনে সরানো যায়।','"मापना शुरू" दबाकर सैटेलाइट मैप पर कोनों पर टैप करें। बिंदु खींचकर हिला सकते हैं।','Tap "Start measuring" then tap the plot corners on the satellite map. Drag points to adjust.');
+D('p_empty','এখনো কোনো প্রজেক্ট সেভ করা নেই।','अभी कोई प्रोजेक्ट सहेजा नहीं है।','No saved projects yet.');D('p_export','সব প্রজেক্ট ডাউনলোড (JSON)','सभी प्रोजेक्ट डाउनलोड (JSON)','Download all projects (JSON)');
+D('p_del','মুছুন','हटाएँ','Delete');D('p_ren','নাম বদল','नाम बदलें','Rename');D('p_del_c','এই প্রজেক্ট মুছবেন?','यह प्रोजेक्ट हटाएँ?','Delete this project?');
+D('s_lang','ভাষা','भाषा','Language');D('s_units','মাপের হিসাব (নিজের এলাকা অনুযায়ী বদলান)','माप का हिसाब (अपने इलाके के अनुसार बदलें)','Unit rates (change to match your area)');
+D('s_sqft','১ শতক = বর্গফুট','1 शतक = वर्ग फुट','1 Shatak = sq ft');D('s_katha','১ কাঠা = শতক','1 कट्ठा = शतक','1 Katha = Shatak');D('s_bigha','১ বিঘা = কাঠা','1 बीघा = कट्ठा','1 Bigha = Katha');
+D('s_acre','১ একর = শতক','1 एकड़ = शतक','1 Acre = Shatak');D('s_chh','১ কাঠা = ছটাক (০ = বন্ধ)','1 कट्ठा = छटाक (0 = बंद)','1 Katha = Chhatak (0 = off)');D('s_len','দৈর্ঘ্যের ডিফল্ট একক','लंबाई की डिफ़ॉल्ट इकाई','Default length unit');
+D('s_reset','সব ডেটা মুছুন','सारा डेटा मिटाएँ','Erase all data');D('s_reset_c','সব সংরক্ষিত প্রজেক্ট ও সেটিংস মুছে যাবে। নিশ্চিত?','सभी सहेजे प्रोजेक्ट और सेटिंग मिट जाएँगे। पक्का?','All saved projects and settings will be erased. Sure?');
+D('s_land','🏛 সরকারি ভূমি রেকর্ড (বাংলার ভূমি)','🏛 सरकारी भूमि रिकॉर्ड (बांग्लार भूमि)','🏛 Official land records (Banglar Bhumi)');
+
+const DIST=[['Alipurduar','আলিপুরদুয়ার','अलीपुरद्वार',26.49,89.53],['Bankura','বাঁকুড়া','बाँकुड़ा',23.23,87.07],['Birbhum','বীরভূম','बीरभूम',23.91,87.53],['Cooch Behar','কোচবিহার','कूचबिहार',26.32,89.45],['Dakshin Dinajpur','দক্ষিণ দিনাজপুর','दक्षिण दिनाजपुर',25.22,88.77],['Darjeeling','দার্জিলিং','दार्जिलिंग',27.04,88.26],['Hooghly','হুগলি','हुगली',22.90,88.40],['Howrah','হাওড়া','हावड़ा',22.59,88.31],['Jalpaiguri','জলপাইগুড়ি','जलपाईगुड़ी',26.52,88.72],['Jhargram','ঝাড়গ্রাম','झाड़ग्राम',22.45,86.99],['Kalimpong','কালিম্পং','कलिम्पोंग',27.06,88.47],['Kolkata','কলকাতা','कोलकाता',22.57,88.36],['Malda','মালদহ','मालदा',25.00,88.14],['Murshidabad','মুর্শিদাবাদ','मुर्शिदाबाद',24.10,88.25],['Nadia','নদিয়া','नदिया',23.40,88.50],['North 24 Parganas','উত্তর ২৪ পরগনা','उत्तर 24 परगना',22.72,88.48],['Paschim Bardhaman','পশ্চিম বর্ধমান','पश्चिम बर्धमान',23.68,86.98],['Paschim Medinipur','পশ্চিম মেদিনীপুর','पश्चिम मेदिनीपुर',22.42,87.32],['Purba Bardhaman','পূর্ব বর্ধমান','पूर्व बर्धमान',23.23,87.86],['Purba Medinipur','পূর্ব মেদিনীপুর','पूर्व मेदिनीपुर',22.30,87.92],['Purulia','পুরুলিয়া','पुरुलिया',23.33,86.36],['South 24 Parganas','দক্ষিণ ২৪ পরগনা','दक्षिण 24 परगना',22.15,88.40],['Uttar Dinajpur','উত্তর দিনাজপুর','उत्तर दिनाजपुर',25.62,88.12]];
+
+/* ---------- number formatting ---------- */
+const BN='০১২৩৪৫৬৭৮৯';
+function nf(n,d){
+  if(n==null||isNaN(n))return '';
+  const m=Math.pow(10,d);let s=(Math.round(n*m)/m).toFixed(d);
+  if(d>0)s=s.replace(/(\.\d*?)0+$/,'$1').replace(/\.$/,'');
+  if(S.lang===0)s=s.replace(/\d/g,c=>BN[c]);
   return s;
 }
-
-/* ---------- build converter ---------- */
-const order = ["bigha","katha","shatak","acre","sqft"].concat(shatakPer.chhatak ? ["chhatak"] : []);
-const rowsEl = document.getElementById("rows");
-const inputs = {};
-
-order.forEach(u => {
-  const row = document.createElement("div");
-  row.className = "row";
-  row.innerHTML = '<label for="in_'+u+'" data-unit="'+u+'"></label>' +
-                  '<input id="in_'+u+'" inputmode="decimal" autocomplete="off" placeholder="0">';
-  rowsEl.appendChild(row);
-  inputs[u] = row.querySelector("input");
-  inputs[u].addEventListener("input", () => {
-    const v = parseNum(inputs[u].value);
-    if (v === null) { order.forEach(o => { if (o !== u) inputs[o].value = ""; }); return; }
-    const inShatak = v * shatakPer[u];
-    order.forEach(o => { if (o !== u) inputs[o].value = fmt(inShatak / shatakPer[o]); });
-  });
-});
-
-document.getElementById("clearBtn").addEventListener("click", () => {
-  order.forEach(o => inputs[o].value = "");
-  inputs[order[0]].focus();
-});
-
-/* ---------- apply language ---------- */
-function applyLang(l){
-  lang = l;
-  try { localStorage.setItem("wbLang", l); } catch(e){}
-  document.documentElement.lang = l;
-  const d = T[l];
-  document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = d[el.dataset.i18n]; });
-  document.querySelectorAll("label[data-unit]").forEach(el => { el.textContent = d[el.dataset.unit]; });
-  document.querySelectorAll(".langs button").forEach(b => b.classList.toggle("active", b.dataset.lang === l));
-  document.title = d.title;
-
-  const bigha = shatakPer.bigha;
-  const lines = [
-    d.r_bigha.replace("{a}", localNum(CONFIG.KATHA_PER_BIGHA)).replace("{b}", localNum(fmt(bigha))),
-    d.r_katha.replace("{a}", localNum(CONFIG.SHATAK_PER_KATHA)),
-    d.r_shatak.replace("{a}", localNum(CONFIG.SQFT_PER_SHATAK)),
-    d.r_acre.replace("{a}", localNum(CONFIG.SHATAK_PER_ACRE))
-  ];
-  if (CONFIG.CHHATAK_PER_KATHA) lines.push(d.r_chhatak.replace("{a}", localNum(CONFIG.CHHATAK_PER_KATHA)));
-  document.getElementById("rates").innerHTML = "<b>" + d.ratesLabel + "</b><br>" + lines.join("<br>");
+function pn(v){
+  v=String(v==null?'':v).replace(/[০-৯]/g,c=>BN.indexOf(c)).replace(/[०-९]/g,c=>'०१२३४५६७८९'.indexOf(c)).replace(/,/g,'').trim();
+  const n=parseFloat(v);return isNaN(n)?null:n;
 }
-document.querySelectorAll(".langs button").forEach(b => b.addEventListener("click", () => applyLang(b.dataset.lang)));
-applyLang(lang);
+/* ---------- units ---------- */
+function uShatak(){
+  const u={shatak:1,katha:S.katha,bigha:S.katha*S.bigha,acre:S.acre,sqft:1/S.sqft,sqm:SQM2SQFT/S.sqft};
+  if(S.chh>0)u.chhatak=S.katha/S.chh;
+  return u;
+}
+function sqmToShatak(sqm){return sqm*SQM2SQFT/S.sqft;}
+function shatakToSqm(sh){return sh*S.sqft/SQM2SQFT;}
+function mixed(sh){
+  sh=Math.round(sh*100)/100;const bi=S.katha*S.bigha,ka=S.katha;
+  const b=Math.floor(sh/bi+1e-9);const r=Math.round((sh-b*bi)*100)/100;
+  const k=Math.floor(r/ka+1e-9);const s=Math.round((r-k*ka)*100)/100;
+  const parts=[];
+  if(b)parts.push(nf(b,0)+' '+t('bigha'));
+  if(k)parts.push(nf(k,0)+' '+t('katha'));
+  if(s||!parts.length)parts.push(nf(s,2)+' '+t('shatak'));
+  return parts.join(' ');
+}
+function resultHTML(sqm){
+  const sh=sqmToShatak(sqm),u=uShatak();
+  let h='<div class="big-res">'+mixed(sh)+'</div><div class="res-grid">';
+  ['bigha','katha','shatak','acre','sqft','sqm','chhatak'].forEach(k=>{
+    if(!u[k])return;
+    h+='<div><span>'+t(k)+'</span><b>'+nf(sh/u[k],(k==='sqft'||k==='sqm')?1:4)+'</b></div>';
+  });
+  return h+'</div>';
+}
+function lenFmt(m){return S.len==='m'?nf(m,2)+' '+t('m_s'):nf(m/FT,1)+' '+t('ft_s');}
+
+/* ---------- last result / projects ---------- */
+let LAST=null;
+function setLast(o){LAST=o;}
+function saveProject(type,sqm,poly){
+  if(!sqm){toast(t('nothing'));return;}
+  const def=t(type==='calc'?'calc':type==='gps'?'gps':type==='mouza'?'mouza':type==='cad'?'cad':'layers')+' '+new Date().toLocaleDateString();
+  const name=prompt(t('proj_name'),def);if(name===null)return;
+  const P=store.get('wb_projects',[]);
+  P.unshift({id:Date.now(),name:name||def,type,sqm,poly:poly||null,date:Date.now()});
+  store.set('wb_projects',P);toast(t('saved'));
+}
+function toReport(){if(!LAST){toast(t('nothing'));return;}go('report');}
+function toDivide(){if(!LAST||!LAST.sqm){toast(t('nothing'));return;}go('divide');if(LAST.poly)dvTab(2);else dvTab(1);}
+
+/* ======================================================================
+   NAVIGATION
+   ====================================================================== */
+const VIEWS=['home','mouza','gps','calc','divide','cad','report','layers','projects','settings','districts'];
+const NAVMAP={home:'home',layers:'layers',districts:'layers',projects:'projects',settings:'settings'};
+const ON={};
+function go(v){if(location.hash.slice(1)===v)show(v);else location.hash=v;}
+window.addEventListener('hashchange',()=>show(location.hash.slice(1)||'home'));
+function show(v){
+  if(!VIEWS.includes(v))v='home';
+  VIEWS.forEach(x=>$('#v-'+x).classList.toggle('active',x===v));
+  $$('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.go===(NAVMAP[v]||'')));
+  window.scrollTo(0,0);
+  if(ON[v])ON[v]();
+}
+window.addEventListener('resize',()=>{[M.v,G.v,C.v,DV.v].forEach(v=>v&&v.resize());if(MAP)MAP.invalidateSize();});
+
+/* ======================================================================
+   VIEWER (pan / pinch-zoom canvas)
+   ====================================================================== */
+class Viewer{
+  constructor(cv,draw,tap){
+    this.c=cv;this.x=cv.getContext('2d');this.draw=draw;this.tap=tap||null;
+    this.s=1;this.tx=0;this.ty=0;this.p=new Map();this.moved=0;this.multi=false;this.pinch=null;this.w=300;this.h=300;this.dpr=1;
+    cv.addEventListener('pointerdown',e=>this.down(e));
+    cv.addEventListener('pointermove',e=>this.move(e));
+    const up=e=>this.up(e);
+    cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+    cv.addEventListener('wheel',e=>{e.preventDefault();const r=cv.getBoundingClientRect();this.zoomAt(e.clientX-r.left,e.clientY-r.top,e.deltaY<0?1.15:1/1.15);this.redraw();},{passive:false});
+    this.resize();
+  }
+  pos(e){const r=this.c.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top};}
+  down(e){
+    try{this.c.setPointerCapture(e.pointerId);}catch(x){}
+    this.p.set(e.pointerId,this.pos(e));
+    if(this.p.size===1){this.moved=0;this.multi=false;}else{this.multi=true;this.pinch=null;}
+  }
+  move(e){
+    if(!this.p.has(e.pointerId))return;
+    const cur=this.pos(e);
+    if(this.p.size===1){
+      const pr=this.p.get(e.pointerId);const dx=cur.x-pr.x,dy=cur.y-pr.y;
+      this.tx+=dx;this.ty+=dy;this.moved+=Math.abs(dx)+Math.abs(dy);this.p.set(e.pointerId,cur);this.redraw();
+    }else if(this.p.size===2){
+      this.p.set(e.pointerId,cur);
+      const [a,b]=[...this.p.values()];
+      const d=Math.hypot(a.x-b.x,a.y-b.y)||1,c={x:(a.x+b.x)/2,y:(a.y+b.y)/2};
+      if(this.pinch){this.zoomAt(c.x,c.y,d/this.pinch.d);this.tx+=c.x-this.pinch.c.x;this.ty+=c.y-this.pinch.c.y;}
+      this.pinch={d,c};this.redraw();
+    }
+  }
+  up(e){
+    if(!this.p.has(e.pointerId))return;
+    const one=this.p.size===1,pos=this.p.get(e.pointerId);
+    this.p.delete(e.pointerId);this.pinch=null;
+    if(one&&!this.multi&&this.moved<8&&this.tap)this.tap(this.toWorld(pos.x,pos.y),pos);
+    if(this.p.size===0)this.multi=false;
+  }
+  toWorld(px,py){return {x:(px-this.tx)/this.s,y:(py-this.ty)/this.s};}
+  zoomAt(px,py,f){const ns=Math.min(80,Math.max(0.02,this.s*f));const k=ns/this.s;this.tx=px-(px-this.tx)*k;this.ty=py-(py-this.ty)*k;this.s=ns;}
+  zoom(f){this.zoomAt(this.w/2,this.h/2,f);this.redraw();}
+  fit(minx,miny,maxx,maxy){
+    const pad=34,sw=(maxx-minx)||1,sh=(maxy-miny)||1;
+    this.s=Math.min((this.w-2*pad)/sw,(this.h-2*pad)/sh);
+    this.tx=(this.w-sw*this.s)/2-minx*this.s;this.ty=(this.h-sh*this.s)/2-miny*this.s;this.redraw();
+  }
+  resize(){
+    const r=this.c.getBoundingClientRect();if(!r.width)return;
+    this.dpr=window.devicePixelRatio||1;
+    this.c.width=Math.round(r.width*this.dpr);this.c.height=Math.round(r.height*this.dpr);
+    this.w=r.width;this.h=r.height;this.redraw();
+  }
+  redraw(){
+    const x=this.x;x.setTransform(this.dpr,0,0,this.dpr,0,0);
+    x.fillStyle='#fff';x.fillRect(0,0,this.w,this.h);
+    x.save();x.translate(this.tx,this.ty);x.scale(this.s,this.s);
+    this.draw(x,this);x.restore();
+  }
+}
+/* draw a label with white outline; size in screen px */
+function label(x,v,txt,px,py,size,color){
+  const r=1/v.s;x.save();x.font='bold '+(size*r)+'px sans-serif';x.textAlign='center';x.textBaseline='middle';
+  x.lineWidth=3*r;x.strokeStyle='#fff';x.strokeText(txt,px,py);x.fillStyle=color||'#12582b';x.fillText(txt,px,py);x.restore();
+}
+function boundsOf(pts){
+  let a=1e18,b=1e18,c=-1e18,d=-1e18;
+  pts.forEach(p=>{a=Math.min(a,p[0]);b=Math.min(b,p[1]);c=Math.max(c,p[0]);d=Math.max(d,p[1]);});
+  return [a,b,c,d];
+}
+function centroid(p){let x=0,y=0;p.forEach(q=>{x+=q[0];y+=q[1];});return [x/p.length,y/p.length];}
+
+/* ======================================================================
+   CALCULATOR / CONVERTER
+   ====================================================================== */
+function calcTab(n){
+  $('#ct1').classList.toggle('on',n===1);$('#ct2').classList.toggle('on',n===2);
+  $('#calcA').style.display=n===1?'block':'none';$('#calcB').style.display=n===2?'block':'none';
+}
+const convIn={};
+function buildConv(){
+  const u=uShatak(),keys=['bigha','katha','shatak','acre','sqft'].concat(u.chhatak?['chhatak']:[]);
+  const box=$('#cvRows');box.innerHTML='';
+  keys.forEach(k=>{
+    const row=document.createElement('div');row.className='row';
+    row.innerHTML='<label for="cv_'+k+'">'+t(k)+'</label><input id="cv_'+k+'" inputmode="decimal" autocomplete="off" placeholder="0">';
+    box.appendChild(row);const inp=row.querySelector('input');convIn[k]=inp;
+    inp.addEventListener('input',()=>{
+      const v=pn(inp.value),uu=uShatak();
+      keys.forEach(o=>{if(o!==k)convIn[o].value=v===null?'':String(Math.round(v*uu[k]/uu[o]*10000)/10000);});
+    });
+  });
+  const lines=[
+    '১ '+t('bigha')+' = '+nf(S.katha*S.bigha,2)+' '+t('shatak')+' = '+nf(S.bigha,2)+' '+t('katha'),
+    '১ '+t('katha')+' = '+nf(S.katha,2)+' '+t('shatak'),
+    '১ '+t('shatak')+' = '+nf(S.sqft,2)+' '+t('sqft'),
+    '১ '+t('acre')+' = '+nf(S.acre,2)+' '+t('shatak')
+  ];
+  if(S.chh>0)lines.push('১ '+t('katha')+' = '+nf(S.chh,2)+' '+t('chhatak'));
+  const fix=S.lang===0?lines:lines.map(l=>l.replace(/^১/,'1'));
+  $('#cvRates').innerHTML='<b>'+t('rates')+':</b><br>'+fix.join('<br>');
+}
+function convClear(){Object.values(convIn).forEach(i=>i.value='');}
+const SHAPES={rect:['len','wid'],tri3:['sideA','sideB','sideC'],tribh:['base','height'],trap:['par1','par2','height'],circle:['radius'],quad:['side1','side2','side3','side4','diag']};
+let calcOut=null;
+function buildShapes(){
+  const sel=$('#cShape'),cur=sel.value||'rect';sel.innerHTML='';
+  Object.keys(SHAPES).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=t('sh_'+k);sel.appendChild(o);});
+  sel.value=cur;buildFields();
+}
+function buildFields(){
+  const sh=$('#cShape').value,box=$('#cFields');const old={};
+  box.querySelectorAll('input').forEach(i=>old[i.dataset.k]=i.value);
+  box.innerHTML='';
+  SHAPES[sh].forEach(k=>{
+    const row=document.createElement('div');row.className='row';
+    row.innerHTML='<label>'+t(k)+'</label><input data-k="'+k+'" inputmode="decimal" placeholder="0" value="'+esc(old[k]||'')+'">';
+    box.appendChild(row);row.querySelector('input').addEventListener('input',calcRun);
+  });
+  calcRun();
+}
+function circlePoly(r){const a=[];for(let i=0;i<72;i++){const th=i/72*2*Math.PI;a.push([r*Math.cos(th),r*Math.sin(th)]);}return a;}
+function calcRun(){
+  const sh=$('#cShape').value;const f=LF_FACTOR[$('#cLen').value]||FT;
+  const v=SHAPES[sh].map(k=>pn($('#cFields input[data-k="'+k+'"]').value));
+  const box=$('#cRes');calcOut=null;
+  if(v.some(x=>x===null||x<=0)){box.innerHTML='';return;}
+  const m=v.map(x=>x*f);let sqm,poly;
+  if(sh==='rect'){sqm=m[0]*m[1];poly=[[0,0],[m[0],0],[m[0],m[1]],[0,m[1]]];}
+  else if(sh==='tribh'){sqm=m[0]*m[1]/2;poly=[[0,0],[m[0],0],[m[0]/2,m[1]]];}
+  else if(sh==='trap'){sqm=(m[0]+m[1])/2*m[2];poly=[[0,0],[m[0],0],[(m[0]+m[1])/2,m[2]],[(m[0]-m[1])/2,m[2]]];}
+  else if(sh==='circle'){sqm=Math.PI*m[0]*m[0];poly=circlePoly(m[0]);}
+  else if(sh==='tri3'){
+    sqm=heron(m[0],m[1],m[2]);
+    if(!isFinite(sqm)){box.innerHTML='<div class="warn">'+t('c_invalid')+'</div>';return;}
+    const a=m[0],b=m[1],c=m[2],x=(b*b+c*c-a*a)/(2*c),y=Math.sqrt(Math.max(0,b*b-x*x));poly=[[0,0],[c,0],[x,y]];
+  }else{
+    const [a,b,c,d,e]=m,t1=heron(a,b,e),t2=heron(c,d,e);
+    if(!isFinite(t1)||!isFinite(t2)){box.innerHTML='<div class="warn">'+t('c_invalid')+'</div>';return;}
+    sqm=t1+t2;
+    const x1=(a*a+e*e-b*b)/(2*e),y1=Math.sqrt(Math.max(0,a*a-x1*x1));
+    const x3=(d*d+e*e-c*c)/(2*e),y3=-Math.sqrt(Math.max(0,d*d-x3*x3));
+    poly=[[0,0],[x1,y1],[e,0],[x3,y3]];
+  }
+  calcOut={sqm,poly};box.innerHTML=resultHTML(sqm);setLast({type:'calc',sqm,poly});
+}
+function calcSave(){if(!calcOut){toast(t('nothing'));return;}saveProject('calc',calcOut.sqm,calcOut.poly);}
+ON.calc=()=>{buildConv();buildShapes();};
+
+/* ======================================================================
+   LAND DIVISION
+   ====================================================================== */
+const DV={tab:1,v:null,poly:null,total:0};
+const COLORS=['#2e9a52','#F2B705','#e4572e','#3b8ed0','#8e5ea2','#17a2a2','#d1478c','#8a8f2a'];
+function dvTab(n){
+  DV.tab=n;$('#dt1').classList.toggle('on',n===1);$('#dt2').classList.toggle('on',n===2);
+  $('#dvSrcBox1').style.display=n===1?'block':'none';$('#dvSrcBox2').style.display=n===2?'block':'none';
+  $('#dvShapeBox').style.display=n===2?'block':'none';$('#dvAng').style.display=n===2?'block':'none';
+  if(n===2){dvSources();if(!DV.v){DV.v=new Viewer($('#dvCanvas'),dvDraw,null);}else DV.v.resize();}
+  dvRun();
+}
+function dvModeUI(){const m=$('#dvMode').value;$('#dvEq').style.display=m==='equal'?'flex':'none';$('#dvPc').style.display=m==='pct'?'block':'none';$('#dvCt').style.display=m==='cut'?'flex':'none';}
+function dvSources(){
+  const sel=$('#dvSrc'),keep=sel.value;sel.innerHTML='';
+  const P=store.get('wb_projects',[]).filter(p=>p.poly);
+  if(LAST&&LAST.poly){const o=document.createElement('option');o.value='last';o.textContent=t('r_last')+' — '+mixed(sqmToShatak(LAST.sqm));sel.appendChild(o);}
+  P.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.name+' — '+mixed(sqmToShatak(p.sqm));sel.appendChild(o);});
+  if(keep&&[...sel.options].some(o=>o.value===keep))sel.value=keep;
+}
+function dvFractions(totalSh){
+  const m=$('#dvMode').value;
+  if(m==='equal'){const n=Math.round(pn($('#dvN').value)||0);if(n<2||n>20)return {err:t('d_err_n')};return {fr:Array(n).fill(1/n)};}
+  if(m==='pct'){
+    const a=$('#dvPct').value.split(/[,\s]+/).map(pn).filter(x=>x!==null&&x>0);
+    if(!a.length)return {err:t('d_err_pct')};
+    const s=a.reduce((p,c)=>p+c,0);if(s>100.01)return {err:t('d_err_pct')};
+    const fr=a.map(x=>x/100);if(s<99.99)fr.push((100-s)/100);return {fr};
+  }
+  const c=pn($('#dvCut').value),u=uShatak()[$('#dvCutU').value];
+  if(c===null||c<=0)return {fr:[1]};
+  const cs=c*u;if(cs>=totalSh)return {err:t('d_err_cut')};
+  return {fr:[cs/totalSh,1-cs/totalSh]};
+}
+function dvRun(){
+  const out=$('#dvOut'),bar=$('#dvBar');out.innerHTML='';bar.innerHTML='';DV.poly=null;
+  let totalSh=0,poly=null;
+  if(DV.tab===1){
+    const v=pn($('#dvTotal').value);if(!v||v<=0){if(DV.v)DV.v.redraw();return;}
+    totalSh=v*uShatak()[$('#dvUnit').value];
+  }else{
+    const sel=$('#dvSrc').value;
+    if(sel==='last'&&LAST&&LAST.poly){poly=LAST.poly;totalSh=sqmToShatak(LAST.sqm);}
+    else{const p=store.get('wb_projects',[]).find(x=>String(x.id)===sel);if(p&&p.poly){poly=p.poly;totalSh=sqmToShatak(p.sqm);}}
+    if(!poly){out.innerHTML='<div class="warn">'+t('d_nosrc')+'</div>';if(DV.v)DV.v.redraw();return;}
+  }
+  const r=dvFractions(totalSh);
+  if(r.err){out.innerHTML='<div class="warn">'+r.err+'</div>';if(DV.v)DV.v.redraw();return;}
+  const fr=r.fr;
+  let areas=fr.map(f=>f*totalSh),res=null;
+  if(poly){
+    const ang=pn($('#dvAngle').value)||0;res=divideByFractions(poly,fr,ang);DV.poly={poly,res};
+    areas=res.parts.map(p=>sqmToShatak(p.area));
+  }
+  let h='',b='';
+  areas.forEach((a,i)=>{
+    const isRest=$('#dvMode').value==='cut'&&fr.length===2&&i===1;
+    const name=isRest?t('d_rest'):t('d_part')+' '+nf(i+1,0);
+    h+='<div class="it"><span class="dot" style="background:'+COLORS[i%8]+'"></span><div><b>'+name+'</b>: '+mixed(a)+'<br><small>'+nf(a*S.sqft,0)+' '+t('sqft')+' · '+nf(fr[i]*100,1)+'%</small></div></div>';
+    b+='<div style="background:'+COLORS[i%8]+';width:'+(fr[i]*100)+'%">'+nf(fr[i]*100,0)+'%</div>';
+  });
+  out.innerHTML=h;bar.innerHTML='<div class="bar">'+b+'</div>';
+  if(DV.v){DV.v.resize();if(poly){const bb=boundsOf(poly.map(p=>[p[0],-p[1]]));DV.v.fit(bb[0],bb[1],bb[2],bb[3]);}}
+}
+function dvDraw(x,v){
+  if(!DV.poly)return;const {poly,res}=DV.poly,r=1/v.s;
+  res.parts.forEach((p,i)=>{
+    if(p.poly.length<3)return;
+    x.beginPath();p.poly.forEach((q,j)=>j?x.lineTo(q[0],-q[1]):x.moveTo(q[0],-q[1]));x.closePath();
+    x.fillStyle=COLORS[i%8]+'aa';x.fill();x.lineWidth=2*r;x.strokeStyle='#12582b';x.stroke();
+    const c=centroid(p.poly);label(x,v,mixed(sqmToShatak(p.area)),c[0],-c[1],11);
+  });
+}
+['dvTotal','dvUnit','dvMode','dvN','dvPct','dvCut','dvCutU','dvSrc'].forEach(id=>{$('#'+id).addEventListener('input',()=>{if(id==='dvMode')dvModeUI();dvRun();});$('#'+id).addEventListener('change',()=>{if(id==='dvMode')dvModeUI();dvRun();});});
+$('#dvAngle').addEventListener('input',()=>{$('#dvAngV').textContent=nf(+$('#dvAngle').value,0);dvRun();});
+ON.divide=()=>{dvModeUI();dvTab(DV.tab);};
+
+/* ======================================================================
+   GPS SURVEY
+   ====================================================================== */
+const G={pts:[],watch:null,cur:null,buf:null,busy:false,v:null,xy:[],area:0};
+function gmsg(m){$('#gStatus').innerHTML=m;}
+function gStart(){
+  if(!navigator.geolocation){gmsg(t('g_none'));return;}
+  if(G.watch!==null)return;
+  gmsg(t('g_wait'));
+  G.watch=navigator.geolocation.watchPosition(p=>{
+    G.cur={lat:p.coords.latitude,lon:p.coords.longitude,acc:p.coords.accuracy};
+    if(G.buf)G.buf.push(G.cur);gStatus();
+  },e=>{gmsg('⚠ '+t('g_err'));G.watch=null;},{enableHighAccuracy:true,maximumAge:0,timeout:25000});
+}
+function gStatus(){
+  if(!G.cur){gmsg(t('g_idle'));return;}
+  const a=G.cur.acc,col=a<=5?'#1B7A3E':a<=12?'#b78a00':'#C62828';
+  gmsg('📍 '+G.cur.lat.toFixed(6)+', '+G.cur.lon.toFixed(6)+'<br>'+t('g_acc')+': <b style="color:'+col+'">±'+nf(a,1)+' '+t('m_s')+'</b>');
+}
+function gAdd(){
+  if(G.busy)return;
+  if(!G.cur){gStart();toast(t('g_wait'));return;}
+  G.busy=true;G.buf=[];let n=6;const btn=$('#gAddBtn');btn.disabled=true;
+  btn.textContent=t('g_avg')+' '+nf(n,0)+'…';
+  const iv=setInterval(()=>{
+    n--;if(n>0){btn.textContent=t('g_avg')+' '+nf(n,0)+'…';return;}
+    clearInterval(iv);
+    const b=G.buf&&G.buf.length?G.buf:[G.cur];G.buf=null;
+    const lat=b.reduce((s,p)=>s+p.lat,0)/b.length,lon=b.reduce((s,p)=>s+p.lon,0)/b.length,acc=b.reduce((s,p)=>s+p.acc,0)/b.length;
+    G.pts.push({lat,lon,acc});G.busy=false;btn.disabled=false;btn.textContent=t('g_add');gUpdate();
+  },1000);
+}
+function gUndo(){G.pts.pop();gUpdate();}
+function gClear(){G.pts=[];gUpdate();}
+function gUpdate(){
+  const R=$('#gRes'),L=$('#gList');
+  L.innerHTML=G.pts.map((p,i)=>'<div class="it"><b>'+t('g_corner')+' '+nf(i+1,0)+'</b><span style="flex:1;font-size:12px">'+p.lat.toFixed(6)+', '+p.lon.toFixed(6)+' (±'+nf(p.acc,1)+t('m_s')+')</span><button class="btn r s" onclick="gDel('+i+')">✕</button></div>').join('');
+  G.xy=G.pts.length?toXY(G.pts):[];R.innerHTML='';
+  if(G.pts.length>=3){
+    const sqm=polyArea(G.xy),per=polyPerim(G.xy),acc=G.pts.reduce((s,p)=>s+p.acc,0)/G.pts.length;
+    const err=Math.min(99,per*acc/sqm*100);
+    R.innerHTML=resultHTML(sqm)+'<div class="warn">'+t('perim')+': '+lenFmt(per)+'<br>'+t('g_errpct')+': ≈ ±'+nf(err,1)+'%</div>';
+    G.area=sqm;setLast({type:'gps',sqm,poly:G.xy});
+  }else if(G.pts.length){R.innerHTML='<div class="warn">'+t('g_need3')+'</div>';G.area=0;}
+  else G.area=0;
+  if(G.v){G.v.resize();if(G.xy.length){const bb=boundsOf(G.xy.map(p=>[p[0],-p[1]]));G.v.fit(bb[0],bb[1],bb[2],bb[3]);}}
+  gStatus();
+}
+function gDel(i){G.pts.splice(i,1);gUpdate();}
+function gDraw(x,v){
+  if(!G.xy.length)return;const r=1/v.s;
+  x.beginPath();G.xy.forEach((p,i)=>i?x.lineTo(p[0],-p[1]):x.moveTo(p[0],-p[1]));if(G.xy.length>=3)x.closePath();
+  x.fillStyle='rgba(27,122,62,.25)';if(G.xy.length>=3)x.fill();x.lineWidth=2.5*r;x.strokeStyle='#1B7A3E';x.stroke();
+  G.xy.forEach((p,i)=>{
+    x.beginPath();x.arc(p[0],-p[1],6*r,0,7);x.fillStyle='#F2B705';x.fill();x.lineWidth=2*r;x.strokeStyle='#12582b';x.stroke();
+    label(x,v,nf(i+1,0),p[0]+12*r,-p[1]-12*r,13);
+    if(G.xy.length>1){const q=G.xy[(i+1)%G.xy.length];if(i<G.xy.length-1||G.xy.length>=3){label(x,v,lenFmt(Math.hypot(q[0]-p[0],q[1]-p[1])),(p[0]+q[0])/2,-(p[1]+q[1])/2,11,'#333');}}
+  });
+}
+function gSave(){if(G.pts.length<3){toast(t('g_need3'));return;}saveProject('gps',G.area,G.xy);}
+ON.gps=()=>{if(!G.v)G.v=new Viewer($('#gCanvas'),gDraw,null);gUpdate();};
+
+/* ======================================================================
+   MOUZA MAP
+   ====================================================================== */
+const M={img:null,mode:'calib',cal:[],mpp:null,pts:[],v:null};
+function mMode(m){M.mode=m;mUpdate();}
+function mTap(w){
+  if(!M.img)return;
+  if(M.mode==='calib'){if(M.cal.length>=2)M.cal=[];M.cal.push([w.x,w.y]);}
+  else M.pts.push([w.x,w.y]);
+  mUpdate();
+}
+$('#mFile').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  const im=new Image();
+  im.onload=()=>{M.img=im;M.cal=[];M.pts=[];M.mpp=null;M.mode='calib';M.v.resize();M.v.fit(0,0,im.width,im.height);mUpdate();};
+  im.src=URL.createObjectURL(f);e.target.value='';
+});
+function mSetScale(){
+  if(M.cal.length<2){toast(t('m_s1'));return;}
+  const d=pn($('#mDist').value);if(!d||d<=0){toast(t('m_dist'));return;}
+  const px=Math.hypot(M.cal[1][0]-M.cal[0][0],M.cal[1][1]-M.cal[0][1]);if(px<1)return;
+  M.mpp=d*LF_FACTOR[$('#mUnit').value]/px;M.mode='trace';toast(t('m_ok'));mUpdate();
+}
+function mUndo(){if(M.mode==='calib')M.cal.pop();else M.pts.pop();mUpdate();}
+function mClear(){if(M.mode==='calib'){M.cal=[];M.mpp=null;}else M.pts=[];mUpdate();}
+function mZoom(f){M.v&&M.v.zoom(f);}
+function mFit(){if(M.img)M.v.fit(0,0,M.img.width,M.img.height);}
+function mUpdate(){
+  $('#mbCal').classList.toggle('on',M.mode==='calib');$('#mbTr').classList.toggle('on',M.mode==='trace');
+  $('#mCalForm').style.display=(M.mode==='calib'&&M.cal.length===2)?'block':'none';
+  let step=t('m_noimg');
+  if(M.img){step=M.mode==='calib'?(M.cal.length===0?t('m_s1'):M.cal.length===1?t('m_s1b'):t('m_s1c')):t('m_s2');}
+  $('#mStep').textContent=step;
+  const R=$('#mRes');R.innerHTML='';
+  if(M.img&&M.pts.length>=3){
+    if(!M.mpp)R.innerHTML='<div class="warn">'+t('m_noscale')+'</div>';
+    else{
+      const poly=M.pts.map(p=>[p[0]*M.mpp,-p[1]*M.mpp]),sqm=polyArea(poly);
+      let sides='<div class="list">';
+      for(let i=0;i<poly.length;i++){const j=(i+1)%poly.length;sides+='<div class="it">'+t('side')+' '+nf(i+1,0)+': <b>'+lenFmt(Math.hypot(poly[j][0]-poly[i][0],poly[j][1]-poly[i][1]))+'</b></div>';}
+      R.innerHTML=resultHTML(sqm)+'<div class="warn">'+t('perim')+': '+lenFmt(polyPerim(poly))+'</div>'+sides+'</div>';
+      M.area=sqm;M.poly=poly;setLast({type:'mouza',sqm,poly});
+    }
+  }
+  if(M.v)M.v.redraw();
+}
+function mDraw(x,v){
+  const r=1/v.s;
+  if(M.img)x.drawImage(M.img,0,0);
+  if(M.cal.length){
+    x.strokeStyle='#C62828';x.lineWidth=2*r;x.beginPath();M.cal.forEach((p,i)=>i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1]));x.stroke();
+    M.cal.forEach(p=>{x.beginPath();x.arc(p[0],p[1],7*r,0,7);x.fillStyle='#C62828';x.fill();x.strokeStyle='#fff';x.lineWidth=2*r;x.stroke();});
+  }
+  if(M.pts.length){
+    x.beginPath();M.pts.forEach((p,i)=>i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1]));if(M.pts.length>=3)x.closePath();
+    x.fillStyle='rgba(242,183,5,.28)';if(M.pts.length>=3)x.fill();x.strokeStyle='#F2B705';x.lineWidth=2.5*r;x.stroke();
+    M.pts.forEach((p,i)=>{
+      x.beginPath();x.arc(p[0],p[1],6*r,0,7);x.fillStyle='#fff';x.fill();x.strokeStyle='#1B7A3E';x.lineWidth=2.5*r;x.stroke();
+      if(M.mpp&&M.pts.length>1&&(i<M.pts.length-1||M.pts.length>=3)){const q=M.pts[(i+1)%M.pts.length];label(x,v,lenFmt(Math.hypot(q[0]-p[0],q[1]-p[1])*M.mpp),(p[0]+q[0])/2,(p[1]+q[1])/2,12);}
+    });
+  }
+  if(!M.img){x.save();x.fillStyle='#999';x.font=(15*r)+'px sans-serif';x.textAlign='center';x.fillText('🗺',v.w/2*r-v.tx*r,v.h/2*r-v.ty*r);x.restore();}
+}
+function mSave(){if(!M.poly||!M.mpp||M.pts.length<3){toast(t('nothing'));return;}saveProject('mouza',M.area,M.poly);}
+ON.mouza=()=>{if(!M.v)M.v=new Viewer($('#mCanvas'),mDraw,mTap);else M.v.resize();mUpdate();};
+
+/* ======================================================================
+   CAD
+   ====================================================================== */
+const C={ents:[],tool:'line',tmp:[],v:null};
+function cUnitF(){return S.len==='m'?1:FT;}
+function cGrid(){return pn($('#cGrid').value)||0;}
+function vertsOf(e){
+  if(e.t==='line')return [e.a,e.b];if(e.t==='poly')return e.pts;
+  if(e.t==='rect')return [e.a,e.b,[e.a[0],e.b[1]],[e.b[0],e.a[1]]];
+  if(e.t==='circ')return [e.c];if(e.t==='text')return [e.p];return [];
+}
+function cSnap(w){
+  let x=w.x,y=w.y;const th=12/C.v.s;let best=null,bd=th;
+  C.ents.forEach(e=>vertsOf(e).forEach(p=>{const d=Math.hypot(p[0]-x,p[1]-y);if(d<bd){bd=d;best=p;}}));
+  C.tmp.forEach(p=>{const d=Math.hypot(p[0]-x,p[1]-y);if(d<bd){bd=d;best=p;}});
+  if(best)return [best[0],best[1]];
+  const g=cGrid();if($('#cSnap').checked&&g>0){x=Math.round(x/g)*g;y=Math.round(y/g)*g;}
+  return [x,y];
+}
+function cTap(w){
+  const q=cSnap(w);
+  switch(C.tool){
+    case 'line':C.tmp.push(q);if(C.tmp.length===2){C.ents.push({t:'line',a:C.tmp[0],b:C.tmp[1]});C.tmp=[];}break;
+    case 'poly':C.tmp.push(q);break;
+    case 'rect':C.tmp.push(q);if(C.tmp.length===2){C.ents.push({t:'rect',a:C.tmp[0],b:C.tmp[1]});C.tmp=[];}break;
+    case 'circ':C.tmp.push(q);if(C.tmp.length===2){C.ents.push({t:'circ',c:C.tmp[0],r:Math.hypot(C.tmp[1][0]-C.tmp[0][0],C.tmp[1][1]-C.tmp[0][1])});C.tmp=[];}break;
+    case 'text':{const s=prompt(t('c_enter'));if(s)C.ents.push({t:'text',p:q,s});break;}
+  }
+  cUpdate();
+}
+function cFinish(){
+  if(C.tool==='poly'){
+    if(C.tmp.length>=3)C.ents.push({t:'poly',pts:C.tmp.slice()});
+    else if(C.tmp.length===2)C.ents.push({t:'line',a:C.tmp[0],b:C.tmp[1]});
+    C.tmp=[];
+  }else C.tmp=[];
+  cUpdate();
+}
+function cUndo(){if(C.tmp.length)C.tmp.pop();else C.ents.pop();cUpdate();}
+function cClear(){C.ents=[];C.tmp=[];cUpdate();}
+function cZoom(f){C.v&&C.v.zoom(f);}
+function closedShapes(){
+  const out=[];
+  C.ents.forEach(e=>{
+    if(e.t==='poly')out.push({poly:e.pts,area:polyArea(e.pts)});
+    else if(e.t==='rect'){const p=[e.a,[e.b[0],e.a[1]],e.b,[e.a[0],e.b[1]]];out.push({poly:p,area:polyArea(p)});}
+    else if(e.t==='circ'){const p=circlePoly(e.r).map(q=>[q[0]+e.c[0],q[1]+e.c[1]]);out.push({poly:p,area:Math.PI*e.r*e.r});}
+  });
+  return out;
+}
+function cUpdate(){
+  $$('#cTools button').forEach(b=>b.classList.toggle('on',b.dataset.c===C.tool));
+  $('#cStep').textContent=t('c_h_'+C.tool)+(C.tmp.length?'  ('+nf(C.tmp.length,0)+')':'');
+  const sh=closedShapes(),f=cUnitF(),R=$('#cRes2');
+  if(!sh.length)R.innerHTML='<div class="hint">'+t('c_none')+'</div>';
+  else{
+    const last=sh[sh.length-1],sqm=last.area*f*f;
+    R.innerHTML=resultHTML(sqm);
+    setLast({type:'cad',sqm,poly:last.poly.map(p=>[p[0]*f,-p[1]*f])});
+  }
+  if(C.v)C.v.redraw();
+}
+function cDraw(x,v){
+  const r=1/v.s,g=cGrid();
+  if(g>0&&g*v.s>7){
+    const x0=-v.tx/v.s,y0=-v.ty/v.s,x1=(v.w-v.tx)/v.s,y1=(v.h-v.ty)/v.s;
+    x.lineWidth=r;x.strokeStyle='#e5ece3';x.beginPath();
+    for(let gx=Math.floor(x0/g)*g;gx<=x1;gx+=g){x.moveTo(gx,y0);x.lineTo(gx,y1);}
+    for(let gy=Math.floor(y0/g)*g;gy<=y1;gy+=g){x.moveTo(x0,gy);x.lineTo(x1,gy);}
+    x.stroke();
+  }
+  x.strokeStyle='#bcd5c1';x.lineWidth=1.5*r;x.beginPath();x.moveTo(-1e4,0);x.lineTo(1e4,0);x.moveTo(0,-1e4);x.lineTo(0,1e4);x.stroke();
+  const U=' '+t(S.len==='m'?'m_s':'ft_s'),seg=(a,b)=>{label(x,v,nf(Math.hypot(b[0]-a[0],b[1]-a[1]),2)+U,(a[0]+b[0])/2,(a[1]+b[1])/2,11,'#333');};
+  x.strokeStyle='#1B7A3E';x.lineWidth=2.2*r;x.lineJoin='round';
+  C.ents.forEach(e=>{
+    if(e.t==='line'){x.beginPath();x.moveTo(e.a[0],e.a[1]);x.lineTo(e.b[0],e.b[1]);x.stroke();seg(e.a,e.b);}
+    else if(e.t==='poly'||e.t==='rect'){
+      const p=e.t==='poly'?e.pts:[e.a,[e.b[0],e.a[1]],e.b,[e.a[0],e.b[1]]];
+      x.beginPath();p.forEach((q,i)=>i?x.lineTo(q[0],q[1]):x.moveTo(q[0],q[1]));x.closePath();x.fillStyle='rgba(27,122,62,.12)';x.fill();x.stroke();
+      p.forEach((q,i)=>seg(q,p[(i+1)%p.length]));
+      const c=centroid(p),f=cUnitF();label(x,v,mixed(sqmToShatak(polyArea(p)*f*f)),c[0],c[1],12,'#8a6500');
+    }else if(e.t==='circ'){
+      x.beginPath();x.arc(e.c[0],e.c[1],e.r,0,7);x.fillStyle='rgba(27,122,62,.12)';x.fill();x.stroke();
+      const f=cUnitF();label(x,v,'r='+nf(e.r,2)+U,e.c[0],e.c[1]-e.r*0.0,11,'#333');label(x,v,mixed(sqmToShatak(Math.PI*e.r*e.r*f*f)),e.c[0],e.c[1]+14*r,12,'#8a6500');
+    }else if(e.t==='text'){label(x,v,e.s,e.p[0],e.p[1],14,'#C62828');}
+  });
+  if(C.tmp.length){
+    x.strokeStyle='#F2B705';x.lineWidth=2.5*r;x.beginPath();C.tmp.forEach((p,i)=>i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1]));x.stroke();
+    C.tmp.forEach(p=>{x.beginPath();x.arc(p[0],p[1],5*r,0,7);x.fillStyle='#F2B705';x.fill();});
+    if(C.tmp.length>1)for(let i=0;i<C.tmp.length-1;i++)seg(C.tmp[i],C.tmp[i+1]);
+  }
+}
+function cSave(){const sh=closedShapes();if(!sh.length){toast(t('c_none'));return;}const f=cUnitF(),l=sh[sh.length-1];saveProject('cad',l.area*f*f,l.poly.map(p=>[p[0]*f,-p[1]*f]));}
+function dl(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);}
+function cPNG(){C.v.redraw();C.v.c.toBlob(b=>dl(b,'plot.png'));}
+function cDXF(){
+  let s='0\nSECTION\n2\nENTITIES\n';
+  const L=(a,b)=>{s+='0\nLINE\n8\n0\n10\n'+a[0]+'\n20\n'+(-a[1])+'\n30\n0\n11\n'+b[0]+'\n21\n'+(-b[1])+'\n31\n0\n';};
+  C.ents.forEach(e=>{
+    if(e.t==='line')L(e.a,e.b);
+    else if(e.t==='poly'||e.t==='rect'){const p=e.t==='poly'?e.pts:[e.a,[e.b[0],e.a[1]],e.b,[e.a[0],e.b[1]]];p.forEach((q,i)=>L(q,p[(i+1)%p.length]));}
+    else if(e.t==='circ')s+='0\nCIRCLE\n8\n0\n10\n'+e.c[0]+'\n20\n'+(-e.c[1])+'\n30\n0\n40\n'+e.r+'\n';
+    else if(e.t==='text')s+='0\nTEXT\n8\n0\n10\n'+e.p[0]+'\n20\n'+(-e.p[1])+'\n30\n0\n40\n2\n1\n'+e.s+'\n';
+  });
+  s+='0\nENDSEC\n0\nEOF\n';dl(new Blob([s],{type:'application/dxf'}),'plot.dxf');
+}
+$$('#cTools button').forEach(b=>b.addEventListener('click',()=>{C.tool=b.dataset.c;C.tmp=[];cUpdate();}));
+$('#cGrid').addEventListener('input',()=>C.v&&C.v.redraw());
+ON.cad=()=>{if(!C.v){C.v=new Viewer($('#cCanvas'),cDraw,cTap);C.v.s=8;C.v.tx=C.v.w/2-100;C.v.ty=C.v.h/2-100;C.v.redraw();}else C.v.resize();cUpdate();};
+
+/* ======================================================================
+   MAP LAYERS (Leaflet)
+   ====================================================================== */
+let MAP=null;const LF={pts:[],mk:[],poly:null,draw:false,pending:null,me:null};
+function loadLeaflet(){return new Promise((res,rej)=>{if(window.L)return res();const s=document.createElement('script');s.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
+function openWB(){LF.pending={bounds:[[21.5,85.8],[27.3,89.9]]};go('layers');}
+function openDistrict(i){const d=DIST[i];LF.pending={c:[d[3],d[4]],z:10};go('layers');}
+function initMap(){
+  loadLeaflet().then(()=>{
+    $('#mapMsg').style.display='none';
+    if(!MAP){
+      MAP=L.map('map').setView([23.8,87.9],7);
+      const osm=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'});
+      const sat=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Tiles © Esri'});
+      sat.addTo(MAP);L.control.layers({'Satellite / স্যাটেলাইট':sat,'Street / রাস্তা':osm}).addTo(MAP);
+      MAP.on('click',e=>{if(!LF.draw)return;LF.pts.push([e.latlng.lat,e.latlng.lng]);lRender();});
+    }
+    setTimeout(()=>{MAP.invalidateSize();
+      if(LF.pending){if(LF.pending.bounds)MAP.fitBounds(LF.pending.bounds);else MAP.setView(LF.pending.c,LF.pending.z);LF.pending=null;}
+    },120);
+    lRender();
+  }).catch(()=>{const m=$('#mapMsg');m.textContent=t('need_net');m.style.display='block';});
+}
+function lToggle(){LF.draw=!LF.draw;$('#lDrawBtn').textContent=t(LF.draw?'l_stop':'l_draw');$('#lDrawBtn').classList.toggle('r',LF.draw);$('#lDrawBtn').classList.toggle('y',!LF.draw);}
+function lLocate(){
+  if(!MAP||!navigator.geolocation){toast(t('g_none'));return;}
+  navigator.geolocation.getCurrentPosition(p=>{
+    const ll=[p.coords.latitude,p.coords.longitude];MAP.setView(ll,18);
+    if(LF.me)MAP.removeLayer(LF.me);LF.me=L.circle(ll,{radius:p.coords.accuracy,color:'#3b8ed0',fillOpacity:.15}).addTo(MAP);
+  },()=>toast(t('g_err')),{enableHighAccuracy:true,timeout:20000});
+}
+function lUndo(){LF.pts.pop();lRender();}
+function lClear(){LF.pts=[];lRender();}
+function lRender(){
+  if(!MAP)return;
+  LF.mk.forEach(m=>MAP.removeLayer(m));LF.mk=[];if(LF.poly){MAP.removeLayer(LF.poly);LF.poly=null;}
+  LF.pts.forEach((ll,i)=>{
+    const m=L.marker(ll,{draggable:true,icon:L.divIcon({className:'ptm',iconSize:[18,18]})}).addTo(MAP);
+    m.on('drag',e=>{const p=e.target.getLatLng();LF.pts[i]=[p.lat,p.lng];if(LF.poly)LF.poly.setLatLngs(LF.pts);});
+    m.on('dragend',()=>lRender());LF.mk.push(m);
+  });
+  if(LF.pts.length>=2)LF.poly=L.polygon(LF.pts,{color:'#F2B705',fillColor:'#1B7A3E',fillOpacity:.3,weight:3}).addTo(MAP);
+  const R=$('#lRes');R.innerHTML='';
+  if(LF.pts.length>=3){
+    const xy=toXY(LF.pts.map(p=>({lat:p[0],lon:p[1]}))),sqm=polyArea(xy);
+    R.innerHTML=resultHTML(sqm)+'<div class="warn">'+t('perim')+': '+lenFmt(polyPerim(xy))+'</div>';
+    LF.area=sqm;LF.xy=xy;setLast({type:'layers',sqm,poly:xy});
+  }else LF.area=0;
+}
+function lSave(){if(!LF.area){toast(t('nothing'));return;}saveProject('layers',LF.area,LF.xy);}
+ON.layers=initMap;
+
+/* ======================================================================
+   DISTRICTS
+   ====================================================================== */
+function distList(){
+  $('#distList').innerHTML=DIST.map((d,i)=>'<button onclick="openDistrict('+i+')">📍 '+esc(S.lang===0?d[1]:S.lang===1?d[2]:d[0])+'</button>').join('');
+}
+ON.districts=distList;
+
+/* ======================================================================
+   PROJECTS
+   ====================================================================== */
+function renderProjects(){
+  const P=store.get('wb_projects',[]),box=$('#projList');
+  if(!P.length){box.innerHTML='<div class="card hint">'+t('p_empty')+'</div>';return;}
+  box.innerHTML=P.map(p=>'<div class="pro"><b>'+esc(p.name)+'</b><small>'+esc(t(p.type==='layers'?'layers':p.type))+' · '+new Date(p.date).toLocaleDateString()+'</small><div style="margin:6px 0;font-weight:700;color:var(--gd)">'+mixed(sqmToShatak(p.sqm))+'</div><div class="btns" style="margin:4px 0"><button class="btn y s" onclick="projReport('+p.id+')">'+t('rep_btn')+'</button>'+(p.poly?'<button class="btn o s" onclick="projDivide('+p.id+')">'+t('div_btn')+'</button>':'')+'<button class="btn o s" onclick="projRename('+p.id+')">'+t('p_ren')+'</button><button class="btn r s" onclick="projDel('+p.id+')">'+t('p_del')+'</button></div></div>').join('');
+}
+function projGet(id){return store.get('wb_projects',[]).find(p=>p.id===id);}
+function projReport(id){const p=projGet(id);if(!p)return;setLast({type:p.type,sqm:p.sqm,poly:p.poly,name:p.name});go('report');}
+function projDivide(id){const p=projGet(id);if(!p)return;setLast({type:p.type,sqm:p.sqm,poly:p.poly,name:p.name});go('divide');dvTab(2);}
+function projRename(id){const P=store.get('wb_projects',[]),p=P.find(x=>x.id===id);if(!p)return;const n=prompt(t('proj_name'),p.name);if(n){p.name=n;store.set('wb_projects',P);renderProjects();}}
+function projDel(id){if(!confirm(t('p_del_c')))return;store.set('wb_projects',store.get('wb_projects',[]).filter(p=>p.id!==id));renderProjects();}
+function exportAll(){dl(new Blob([JSON.stringify(store.get('wb_projects',[]),null,1)],{type:'application/json'}),'wb-land-projects.json');}
+ON.projects=renderProjects;
+
+/* ======================================================================
+   REPORT
+   ====================================================================== */
+function repSources(){
+  const sel=$('#rSrc'),keep=sel.value;sel.innerHTML='';
+  const add=(v,txt)=>{const o=document.createElement('option');o.value=v;o.textContent=txt;sel.appendChild(o);};
+  if(LAST&&LAST.sqm)add('last',t('r_last')+' — '+mixed(sqmToShatak(LAST.sqm)));
+  store.get('wb_projects',[]).forEach(p=>add(String(p.id),p.name+' — '+mixed(sqmToShatak(p.sqm))));
+  add('manual',t('r_manual'));
+  if(keep&&[...sel.options].some(o=>o.value===keep))sel.value=keep;
+  $('#rManual').style.display=sel.value==='manual'?'flex':'none';
+}
+function polySVG(poly){
+  if(!poly||poly.length<3)return '';
+  const pts=poly.map(p=>[p[0],-p[1]]),[a,b,c,d]=boundsOf(pts),W=300,H=200,pad=14;
+  const k=Math.min((W-2*pad)/((c-a)||1),(H-2*pad)/((d-b)||1)),ox=(W-(c-a)*k)/2,oy=(H-(d-b)*k)/2;
+  const path=pts.map((p,i)=>(i?'L':'M')+((p[0]-a)*k+ox).toFixed(1)+' '+((p[1]-b)*k+oy).toFixed(1)).join(' ')+' Z';
+  return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;max-width:340px;border:1px solid #999;background:#fafafa"><path d="'+path+'" fill="rgba(27,122,62,.25)" stroke="#1B7A3E" stroke-width="2"/></svg>';
+}
+function repBuild(){
+  const sel=$('#rSrc').value;let sqm=0,poly=null,name='';
+  $('#rManual').style.display=sel==='manual'?'flex':'none';
+  if(sel==='last'&&LAST){sqm=LAST.sqm;poly=LAST.poly;name=LAST.name||'';}
+  else if(sel==='manual'){const v=pn($('#rMan').value);if(v>0)sqm=shatakToSqm(v*uShatak()[$('#rManU').value]);}
+  else{const p=projGet(+sel);if(p){sqm=p.sqm;poly=p.poly;name=p.name;}}
+  const f=[['r_owner','rOwner'],['r_mouza','rMouza'],['r_thana','rThana'],['r_dist','rDist'],['r_dag','rDag'],['r_khatian','rKh']].filter(x=>$('#'+x[1]).value.trim());
+  let h='<h1>'+t('app')+'</h1><div style="color:#555">'+t('r_title')+' · '+t('r_date')+': '+new Date().toLocaleDateString()+(name?' · '+esc(name):'')+'</div>';
+  if(f.length)h+='<table>'+f.map(x=>'<tr><th style="width:38%">'+t(x[0])+'</th><td>'+esc($('#'+x[1]).value)+'</td></tr>').join('')+'</table>';
+  if(!sqm)h+='<div class="warn">'+t('r_noarea')+'</div>';
+  else{
+    const sh=sqmToShatak(sqm),u=uShatak();
+    h+='<h3 style="margin:14px 0 4px">'+t('r_area')+': '+mixed(sh)+'</h3><table>';
+    ['bigha','katha','shatak','acre','sqft','sqm','chhatak'].forEach(k=>{if(u[k])h+='<tr><th style="width:38%">'+t(k)+'</th><td>'+nf(sh/u[k],(k==='sqft'||k==='sqm')?1:4)+'</td></tr>';});
+    h+='</table>';
+    if(poly)h+='<div style="text-align:center">'+polySVG(poly)+'</div>';
+  }
+  const nt=$('#rNotes').value.trim();if(nt)h+='<p><b>'+t('r_notes')+':</b> '+esc(nt)+'</p>';
+  h+='<div class="sig"><div>'+t('r_sign1')+'</div><div>'+t('r_sign2')+'</div></div><p style="font-size:11px;color:#666;margin-top:22px">'+t('disc')+'</p>';
+  $('#reportPaper').innerHTML=h;
+}
+['rSrc','rMan','rManU','rOwner','rMouza','rThana','rDist','rDag','rKh','rNotes'].forEach(id=>{$('#'+id).addEventListener('input',repBuild);$('#'+id).addEventListener('change',repBuild);});
+ON.report=()=>{repSources();repBuild();};
+
+/* ======================================================================
+   SETTINGS & LANGUAGE
+   ====================================================================== */
+function applyI18n(){
+  $$('[data-t]').forEach(e=>{e.textContent=t(e.dataset.t);});
+  $$('[data-tp]').forEach(e=>{e.placeholder=t(e.dataset.tp);});
+  document.documentElement.lang=['bn','hi','en'][S.lang];
+  document.title=t('app');
+  $$('[data-l]').forEach(b=>b.classList.toggle('on',+b.dataset.l===S.lang));
+  $('#lDrawBtn').textContent=t(LF.draw?'l_stop':'l_draw');
+}
+function setLang(i){S.lang=i;saveS();refreshAll();}
+$$('[data-l]').forEach(b=>b.addEventListener('click',()=>setLang(+b.dataset.l)));
+function refreshAll(){
+  applyI18n();buildConv();buildShapes();distList();renderProjects();repSources();repBuild();dvSources();dvRun();mUpdate();gUpdate();cUpdate();lRender();
+}
+function loadSettingsUI(){
+  $('#sSqft').value=S.sqft;$('#sKatha').value=S.katha;$('#sBigha').value=S.bigha;$('#sAcre').value=S.acre;$('#sChh').value=S.chh;$('#sLen').value=S.len;
+}
+[['sSqft','sqft'],['sKatha','katha'],['sBigha','bigha'],['sAcre','acre'],['sChh','chh']].forEach(([id,k])=>{
+  $('#'+id).addEventListener('change',()=>{const v=pn($('#'+id).value);if(v===null||v<0||(k!=='chh'&&v===0)){loadSettingsUI();return;}S[k]=v;saveS();refreshAll();});
+});
+$('#sLen').addEventListener('change',()=>{S.len=$('#sLen').value;saveS();refreshAll();});
+$('#cLen').value=S.len;
+function resetAll(){if(!confirm(t('s_reset_c')))return;try{localStorage.removeItem('wb_projects');localStorage.removeItem('wb_settings');}catch(e){}location.hash='home';location.reload();}
+ON.settings=loadSettingsUI;
+
+/* ---------- start ---------- */
+applyI18n();buildConv();buildShapes();distList();
+show(location.hash.slice(1)||'home');
 </script>
 </body>
 </html>
