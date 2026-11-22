@@ -275,9 +275,9 @@ let points=[],markers=[],poly=null,closed=false,mouzaOverlay=null,mouzaOp=0.6,mo
 
 function initMap(){
   if(map){map.invalidateSize();return;}
-  map=L.map('map').setView([22.9868,87.855],8);
-  osm=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'});
-  sat=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Esri'});
+  map=L.map('map',{maxZoom:23}).setView([22.9868,87.855],8);
+  osm=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:23,maxNativeZoom:19,attribution:'© OpenStreetMap'});
+  sat=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:23,maxNativeZoom:18,attribution:'Esri'});
   osm.addTo(map);
   if(mouzaURL)placeMouza();
 }
@@ -296,7 +296,7 @@ function startGPS(){
     if(!myMarker){
       myMarker=L.circleMarker(curPos,{radius:9,color:'#fff',weight:3,fillColor:'#1976d2',fillOpacity:1}).addTo(map);
       accCircle=L.circle(curPos,{radius:curAcc,color:'#1976d2',weight:1,fillOpacity:0.1}).addTo(map);
-      map.setView(curPos,19);
+      map.setView(curPos,18);
     }else{myMarker.setLatLng(curPos);accCircle.setLatLng(curPos).setRadius(curAcc);}
   },e=>{
     document.getElementById('gpsStatus').textContent='GPS: OFF';
