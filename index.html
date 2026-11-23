@@ -106,6 +106,7 @@ input,select.f{width:100%;padding:11px;margin:6px 0;border:1px solid #9ccc9c;bor
     <div class="bar">
       <button onclick="mzRotate(-3)">⟲ 3°</button><button onclick="mzRotate(3)">⟳ 3°</button>
       <button onclick="mouzaOpacity(0.1)">◐＋</button><button onclick="mouzaOpacity(-0.1)">◐－</button>
+      <button onclick="mzToggleWhite()">⬜ <span data-t="mzwhite"></span></button>
     </div>
     <div class="bar">
       <button id="dagBtn" onclick="startDag()">✏️ <span data-t="dagdraw"></span></button>
@@ -124,7 +125,7 @@ input,select.f{width:100%;padding:11px;margin:6px 0;border:1px solid #9ccc9c;bor
   <button class="back" onclick="show('home')">← <span data-t="back">Back</span></button>
   <h3 data-t="mouza">Mouza Map</h3>
   <p style="font-size:14px;line-height:1.5" data-t="mouzahelp"></p>
-  <input type="file" id="mouzaFile" accept="image/*" onchange="loadMouza(this)">
+  <input type="file" id="mouzaFile" accept="image/*,application/pdf,.pdf" onchange="loadMouza(this)">
   <div class="bar">
     <button onclick="mouzaOpacity(-0.1)">− Opacity</button>
     <button onclick="mouzaOpacity(0.1)">+ Opacity</button>
@@ -205,28 +206,28 @@ input,select.f{width:100%;padding:11px;margin:6px 0;border:1px solid #9ccc9c;bor
 const T={
 bn:{appname:"West Bengal Land Expert",survey:"GPS Survey",livemap:"Live Map",mouza:"Mouza Map",calc:"Land Calculator",conv:"Land Converter",divide:"Land Division",saved:"Saved Projects",report:"Land Report",settings:"Settings",back:"পিছনে",gpson:"GPS চালু",layer:"স্যাটেলাইট / ম্যাপ",addcorner:"কোণা যোগ",delall:"সব মুছুন",close:"সীমানা বন্ধ",save:"সেভ",
 gpsnote:"পয়েন্ট টেনে সঠিক জায়গায় বসানো যাবে। GPS-এ কিছুটা ভুল হতে পারে, তাই Accuracy দেখুন। এই মাপ প্রাথমিক হিসাবের জন্য; সরকারি জমির সীমানা নির্ধারণের বিকল্প নয়।",
-mouzahelp:"আপনার মৌজা ম্যাপের ছবি আপলোড করুন। তারপর লাইভ ম্যাপে সেটি স্বচ্ছভাবে বসিয়ে জমির সীমানা মেলাতে পারবেন।",
+mouzahelp:"আপনার মৌজা ম্যাপের ছবি বা PDF ফাইল আপলোড করুন। তারপর লাইভ ম্যাপে সেটি স্বচ্ছভাবে বসিয়ে জমির সীমানা মেলাতে পারবেন।",
 mouzanote:"ছবিটি ম্যাপের বর্তমান দৃশ্যের ওপর বসবে। Live Map-এ গিয়ে জুম করে মেলান। সরকারি মৌজা ম্যাপের জন্য banglarbhumi.gov.in দেখুন।",
 calcbtn:"হিসাব করুন",convbtn:"রূপান্তর",diveq:"সমান ভাগ",divfix:"নির্দিষ্ট পরিমাণ বাদ দিন",pdf:"PDF সেভ / প্রিন্ট",
 length:"দৈর্ঘ্য",width:"প্রস্থ",amount:"পরিমাণ",totalshatak:"মোট জমি (শতক)",parts:"কয় ভাগ?",fixedshatak:"নির্দিষ্ট অংশ (শতক)",
 mainunit:"প্রধান একক",bighatype:"বিঘার মান",unitnote:"পশ্চিমবঙ্গে সাধারণত ১ বিঘা = ৩৩ শতক (প্রায় ১৪৪০০ বর্গফুট)। এলাকাভেদে মান আলাদা হতে পারে, তাই নিজের এলাকার মান বেছে নিন।",
-sqft:"বর্গফুট",sqm:"বর্গমিটার",shatak:"শতক",katha:"কাঠা",bigha:"বিঘা",acre:"একর",perim:"পরিসীমা (মিটার)",points:"পয়েন্ট সংখ্যা",each:"প্রতি ভাগ",given:"নির্দিষ্ট অংশ",rest:"বাকি",dagtitle:"মৌজা ম্যাপ ও দাগ",dagdraw:"দাগ আঁকুন",dagfinish:"দাগ সম্পূর্ণ",daghint:"ম্যাপে দাগের প্রতিটি কোণায় ট্যাপ করুন, শেষ হলে 'দাগ সম্পূর্ণ' চাপুন।",dagprompt:"দাগ নম্বর লিখুন:",dagwhich:"কোন কোন দাগ পড়ছে",dagofland:"জমির",dagofdag:"দাগের",dagother:"দাগের বাইরে / অন্য",dagnone:"মাপা জমি কোনো দাগের সঙ্গে মেলেনি",daglist:"আঁকা দাগ",dag:"দাগ",dagnote:"দাগের হিসাব আনুমানিক; মৌজা ম্যাপ ঠিকমতো মেলানোর ওপর নির্ভর করে।",mzhelp:"মৌজা ছবি মেলান: সরান, বড়-ছোট করুন, ঘোরান। প্রথমে ম্যাপ জুম করে জমির জায়গায় আনুন, তারপর 'এখানে বসান' চাপুন।",mzfit:"এখানে বসান",mzfirst:"আগে মৌজা ম্যাপের ছবি আপলোড করুন"},
+sqft:"বর্গফুট",sqm:"বর্গমিটার",shatak:"শতক",katha:"কাঠা",bigha:"বিঘা",acre:"একর",perim:"পরিসীমা (মিটার)",points:"পয়েন্ট সংখ্যা",each:"প্রতি ভাগ",given:"নির্দিষ্ট অংশ",rest:"বাকি",dagtitle:"মৌজা ম্যাপ ও দাগ",dagdraw:"দাগ আঁকুন",dagfinish:"দাগ সম্পূর্ণ",daghint:"ম্যাপে দাগের প্রতিটি কোণায় ট্যাপ করুন, শেষ হলে 'দাগ সম্পূর্ণ' চাপুন।",dagprompt:"দাগ নম্বর লিখুন:",dagwhich:"কোন কোন দাগ পড়ছে",dagofland:"জমির",dagofdag:"দাগের",dagother:"দাগের বাইরে / অন্য",dagnone:"মাপা জমি কোনো দাগের সঙ্গে মেলেনি",daglist:"আঁকা দাগ",dag:"দাগ",dagnote:"দাগের হিসাব আনুমানিক; মৌজা ম্যাপ ঠিকমতো মেলানোর ওপর নির্ভর করে।",mzhelp:"মৌজা ছবি মেলান: সরান, বড়-ছোট করুন, ঘোরান। প্রথমে ম্যাপ জুম করে জমির জায়গায় আনুন, তারপর 'এখানে বসান' চাপুন।",mzfit:"এখানে বসান",mzfirst:"আগে মৌজা ম্যাপের ছবি বা PDF আপলোড করুন",mzwhite:"সাদা বাদ",pdfpage:"কোন পাতা?",pdferr:"PDF খুলতে সমস্যা",pdfnet:"PDF রিডার লোড হয়নি, ইন্টারনেট দেখুন"},
 hi:{appname:"West Bengal Land Expert",survey:"GPS सर्वे",livemap:"लाइव मैप",mouza:"मौजा मैप",calc:"भूमि कैलकुलेटर",conv:"भूमि कन्वर्टर",divide:"भूमि विभाजन",saved:"सेव प्रोजेक्ट",report:"भूमि रिपोर्ट",settings:"सेटिंग्स",back:"वापस",gpson:"GPS चालू",layer:"सैटेलाइट / मैप",addcorner:"कोना जोड़ें",delall:"सब हटाएं",close:"सीमा बंद करें",save:"सेव",
 gpsnote:"पॉइंट को खींचकर सही जगह रखा जा सकता है। GPS में थोड़ी गलती हो सकती है, इसलिए Accuracy देखें। यह माप केवल प्रारंभिक हिसाब के लिए है; सरकारी सीमा निर्धारण का विकल्प नहीं।",
-mouzahelp:"अपने मौजा मैप की फोटो अपलोड करें। फिर लाइव मैप पर उसे पारदर्शी रूप से रखकर सीमा मिलाएं।",
+mouzahelp:"अपने मौजा मैप की फोटो या PDF फाइल अपलोड करें। फिर लाइव मैप पर उसे पारदर्शी रूप से रखकर सीमा मिलाएं।",
 mouzanote:"फोटो मैप के वर्तमान दृश्य पर बैठेगी। Live Map में जाकर ज़ूम करके मिलाएं।",
 calcbtn:"हिसाब करें",convbtn:"बदलें",diveq:"बराबर भाग",divfix:"निर्दिष्ट मात्रा घटाएं",pdf:"PDF सेव / प्रिंट",
 length:"लंबाई",width:"चौड़ाई",amount:"मात्रा",totalshatak:"कुल जमीन (शतक)",parts:"कितने भाग?",fixedshatak:"निर्दिष्ट हिस्सा (शतक)",
 mainunit:"मुख्य इकाई",bighatype:"बीघा का मान",unitnote:"पश्चिम बंगाल में आमतौर पर 1 बीघा = 33 शतक (लगभग 14400 वर्गफुट)। इलाके के अनुसार मान अलग हो सकता है।",
-sqft:"वर्गफुट",sqm:"वर्गमीटर",shatak:"शतक",katha:"काठा",bigha:"बीघा",acre:"एकड़",perim:"परिमाप (मीटर)",points:"पॉइंट संख्या",each:"प्रति भाग",given:"निर्दिष्ट हिस्सा",rest:"बाकी",dagtitle:"मौजा मैप और दाग",dagdraw:"दाग बनाएं",dagfinish:"दाग पूरा",daghint:"मैप पर दाग के हर कोने पर टैप करें, फिर 'दाग पूरा' दबाएं।",dagprompt:"दाग नंबर लिखें:",dagwhich:"कौन-कौन से दाग आ रहे हैं",dagofland:"जमीन का",dagofdag:"दाग का",dagother:"दाग के बाहर / अन्य",dagnone:"मापी गई जमीन किसी दाग से नहीं मिली",daglist:"बनाए गए दाग",dag:"दाग",dagnote:"दाग का हिसाब अनुमानित है; मौजा मैप को सही मिलाने पर निर्भर करता है।",mzhelp:"मौजा फोटो मिलाएं: खिसकाएं, बड़ा-छोटा करें, घुमाएं। पहले मैप ज़ूम करके जमीन की जगह लाएं, फिर 'यहाँ बैठाएं' दबाएं।",mzfit:"यहाँ बैठाएं",mzfirst:"पहले मौजा मैप की फोटो अपलोड करें"},
+sqft:"वर्गफुट",sqm:"वर्गमीटर",shatak:"शतक",katha:"काठा",bigha:"बीघा",acre:"एकड़",perim:"परिमाप (मीटर)",points:"पॉइंट संख्या",each:"प्रति भाग",given:"निर्दिष्ट हिस्सा",rest:"बाकी",dagtitle:"मौजा मैप और दाग",dagdraw:"दाग बनाएं",dagfinish:"दाग पूरा",daghint:"मैप पर दाग के हर कोने पर टैप करें, फिर 'दाग पूरा' दबाएं।",dagprompt:"दाग नंबर लिखें:",dagwhich:"कौन-कौन से दाग आ रहे हैं",dagofland:"जमीन का",dagofdag:"दाग का",dagother:"दाग के बाहर / अन्य",dagnone:"मापी गई जमीन किसी दाग से नहीं मिली",daglist:"बनाए गए दाग",dag:"दाग",dagnote:"दाग का हिसाब अनुमानित है; मौजा मैप को सही मिलाने पर निर्भर करता है।",mzhelp:"मौजा फोटो मिलाएं: खिसकाएं, बड़ा-छोटा करें, घुमाएं। पहले मैप ज़ूम करके जमीन की जगह लाएं, फिर 'यहाँ बैठाएं' दबाएं।",mzfit:"यहाँ बैठाएं",mzfirst:"पहले मौजा मैप की फोटो या PDF अपलोड करें",mzwhite:"सफेद हटाएं",pdfpage:"कौन सा पृष्ठ?",pdferr:"PDF खोलने में समस्या",pdfnet:"PDF रीडर लोड नहीं हुआ, इंटरनेट देखें"},
 en:{appname:"West Bengal Land Expert",survey:"GPS Survey",livemap:"Live Map",mouza:"Mouza Map",calc:"Land Calculator",conv:"Land Converter",divide:"Land Division",saved:"Saved Projects",report:"Land Report",settings:"Settings",back:"Back",gpson:"Start GPS",layer:"Satellite / Map",addcorner:"Add Corner",delall:"Delete All",close:"Close Boundary",save:"Save",
 gpsnote:"Drag points to correct them. GPS can be off by a few metres, so watch the accuracy. This is a preliminary estimate and not a substitute for an official boundary survey.",
-mouzahelp:"Upload a photo of your mouza map, then overlay it semi-transparently on the live map to compare boundaries.",
+mouzahelp:"Upload a photo or PDF of your mouza map, then overlay it semi-transparently on the live map to compare boundaries.",
 mouzanote:"The image is placed over the current map view. Go to Live Map and zoom to align it.",
 calcbtn:"Calculate",convbtn:"Convert",diveq:"Divide equally",divfix:"Subtract fixed portion",pdf:"Save PDF / Print",
 length:"Length",width:"Width",amount:"Amount",totalshatak:"Total land (shatak)",parts:"Number of parts",fixedshatak:"Fixed portion (shatak)",
 mainunit:"Main unit",bighatype:"Bigha value",unitnote:"In West Bengal 1 bigha is commonly 33 shatak (about 14400 sq ft). Values vary by area, so pick the one for yours.",
-sqft:"Sq ft",sqm:"Sq m",shatak:"Shatak",katha:"Katha",bigha:"Bigha",acre:"Acre",perim:"Perimeter (m)",points:"Points",each:"Each part",given:"Fixed portion",rest:"Remaining",dagtitle:"Mouza map & dags",dagdraw:"Draw dag",dagfinish:"Finish dag",daghint:"Tap each corner of the dag on the map, then press 'Finish dag'.",dagprompt:"Enter dag number:",dagwhich:"Dags falling in this land",dagofland:"of land",dagofdag:"of dag",dagother:"Outside dags / other",dagnone:"The surveyed land does not overlap any drawn dag",daglist:"Drawn dags",dag:"Dag",dagnote:"Dag split is approximate and depends on how well the mouza map is aligned.",mzhelp:"Align the mouza image: move, scale, rotate. First zoom the map to your plot, then press Fit here.",mzfit:"Fit here",mzfirst:"Upload a mouza map image first"}
+sqft:"Sq ft",sqm:"Sq m",shatak:"Shatak",katha:"Katha",bigha:"Bigha",acre:"Acre",perim:"Perimeter (m)",points:"Points",each:"Each part",given:"Fixed portion",rest:"Remaining",dagtitle:"Mouza map & dags",dagdraw:"Draw dag",dagfinish:"Finish dag",daghint:"Tap each corner of the dag on the map, then press 'Finish dag'.",dagprompt:"Enter dag number:",dagwhich:"Dags falling in this land",dagofland:"of land",dagofdag:"of dag",dagother:"Outside dags / other",dagnone:"The surveyed land does not overlap any drawn dag",daglist:"Drawn dags",dag:"Dag",dagnote:"Dag split is approximate and depends on how well the mouza map is aligned.",mzhelp:"Align the mouza image: move, scale, rotate. First zoom the map to your plot, then press Fit here.",mzfit:"Fit here",mzfirst:"Upload a mouza map image or PDF first",mzwhite:"Hide white",pdfpage:"Which page?",pdferr:"Could not open PDF",pdfnet:"PDF reader did not load, check internet"}
 };
 let LANG=localStorage.getItem('lang')||'bn';
 const tr=k=>(T[LANG]&&T[LANG][k])||T.en[k]||k;
@@ -398,24 +399,86 @@ function showSurveyResult(fast){
 let mz=null;
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
+const MZ_MAX=1800;
+function whiteToAlpha(src){
+  const cv=document.createElement('canvas');cv.width=src.width;cv.height=src.height;
+  const g=cv.getContext('2d');g.drawImage(src,0,0);
+  const d=g.getImageData(0,0,cv.width,cv.height),px=d.data;
+  for(let i=0;i<px.length;i+=4){
+    const m=Math.min(px[i],px[i+1],px[i+2]);
+    px[i+3]=Math.min(px[i+3],255-m);
+  }
+  g.putImageData(d,0,0);
+  return cv;
+}
+function buildMz(){
+  mz.img=mz.clear?whiteToAlpha(mz.base):mz.base;
+  mz.url0=mz.img.toDataURL(mz.clear?'image/png':'image/jpeg',0.9);
+}
+function setMouzaCanvas(cv,clear){
+  mz={base:cv,clear:!!clear,angle:0,k:1};
+  buildMz();
+  if(mouzaOverlay&&map){map.removeLayer(mouzaOverlay);mouzaOverlay=null;}
+  show('survey');
+  setTimeout(()=>{initMap();placeMouza();},150);
+}
+function mzToggleWhite(){
+  if(!needMz())return;
+  mz.clear=!mz.clear;buildMz();updateMouza();
+}
+function loadPdfLib(){
+  return new Promise((res,rej)=>{
+    if(window.pdfjsLib)return res(window.pdfjsLib);
+    const sc=document.createElement('script');
+    sc.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    sc.onload=()=>{
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      res(window.pdfjsLib);
+    };
+    sc.onerror=()=>rej(new Error(tr('pdfnet')));
+    document.head.appendChild(sc);
+  });
+}
+async function loadMouzaPdf(f){
+  try{
+    const lib=await loadPdfLib();
+    const buf=await f.arrayBuffer();
+    const pdf=await lib.getDocument({data:buf}).promise;
+    let n=1;
+    if(pdf.numPages>1){
+      const a=prompt(tr('pdfpage')+' (1-'+pdf.numPages+')','1');
+      if(a===null)return;
+      n=Math.min(pdf.numPages,Math.max(1,parseInt(a)||1));
+    }
+    const page=await pdf.getPage(n);
+    const v1=page.getViewport({scale:1});
+    const vp=page.getViewport({scale:MZ_MAX/Math.max(v1.width,v1.height)});
+    const cv=document.createElement('canvas');
+    cv.width=Math.round(vp.width);cv.height=Math.round(vp.height);
+    const g=cv.getContext('2d');
+    g.fillStyle='#fff';g.fillRect(0,0,cv.width,cv.height);
+    await page.render({canvasContext:g,viewport:vp}).promise;
+    setMouzaCanvas(cv,true);
+  }catch(e){alert(tr('pdferr')+': '+e.message);}
+}
 function loadMouza(inp){
   const f=inp.files[0];if(!f)return;
+  const isPdf=f.type==='application/pdf'||/\.pdf$/i.test(f.name);
+  if(isPdf){loadMouzaPdf(f);inp.value='';return;}
   const rd=new FileReader();
   rd.onload=e=>{
     const im=new Image();
     im.onload=()=>{
-      const sc=Math.min(1,1600/Math.max(im.width,im.height));
+      const sc=Math.min(1,MZ_MAX/Math.max(im.width,im.height));
       const cv=document.createElement('canvas');
       cv.width=Math.round(im.width*sc);cv.height=Math.round(im.height*sc);
       cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);
-      mz={img:cv,url0:cv.toDataURL('image/jpeg',0.9),angle:0,k:1};
-      if(mouzaOverlay&&map){map.removeLayer(mouzaOverlay);mouzaOverlay=null;}
-      show('survey');
-      setTimeout(()=>{initMap();placeMouza();},150);
+      setMouzaCanvas(cv,false);
     };
     im.src=e.target.result;
   };
   rd.readAsDataURL(f);
+  inp.value='';
 }
 function placeMouza(){
   if(!map||!mz)return;
