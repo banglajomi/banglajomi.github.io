@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>West Bengal Land Expert</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,"Noto Sans Bengali",sans-serif}
+body{background:#fffbe6;color:#1b4d2b;max-width:620px;margin:auto;min-height:100vh}
+.hidden{display:none!important}
+.top{background:linear-gradient(135deg,#2e7d32,#43a047);color:#fff;padding:14px}
+.top h1{font-size:19px;display:flex;align-items:center;gap:8px}
+.top .row{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:13px}
+.top select{padding:5px 8px;border-radius:8px;border:none}
+#gpsStatus{background:#ffffff33;padding:4px 10px;border-radius:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px}
+.card{background:#fff;border:2px solid #c8e6c9;border-radius:16px;padding:18px 8px;text-align:center;font-weight:600;cursor:pointer;box-shadow:0 2px 6px #0001;transition:.15s}
+.card:active{transform:scale(.97);background:#f1f8e9}
+.card .ic{font-size:30px;display:block;margin-bottom:6px}
+.card.big{grid-column:span 2;background:linear-gradient(135deg,#2e7d32,#388e3c);color:#fff;font-size:20px;padding:28px}
+.card.yellow{background:#fff9c4}
+.screen{padding:12px}
+.screen h3{margin:4px 0 8px}
+.back{background:#2e7d32;color:#fff;border:none;padding:9px 16px;border-radius:10px;margin-bottom:10px;font-size:14px}
+#map{height:52vh;border-radius:14px;border:2px solid #c8e6c9}
+.bar{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.bar button,.btn{flex:1;min-width:90px;padding:11px 8px;border:none;border-radius:10px;background:#66bb6a;color:#fff;font-weight:600;font-size:14px}
+.btn{width:100%;margin:6px 0}
+.bar button.red{background:#e53935}
+.bar button.blue{background:#1976d2}
+.res{background:#fff;border-radius:14px;padding:10px;margin-top:8px;border:2px solid #c8e6c9}
+.res div{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #ddd}
+.res div:last-child{border:none}
+.res .v{font-weight:700;font-size:17px;color:#1b5e20}
+input,select.f{width:100%;padding:11px;margin:6px 0;border:1px solid #9ccc9c;border-radius:10px;font-size:15px;background:#fff}
+.note{font-size:12px;color:#b33;margin-top:10px;line-height:1.5}
+.item{background:#fff;border:2px solid #c8e6c9;border-radius:12px;padding:10px;margin:6px 0;display:flex;justify-content:space-between;align-items:center;gap:6px}
+.item button{padding:6px 10px;border:none;border-radius:8px;background:#66bb6a;color:#fff}
+#acc{margin:6px 0;font-size:14px;font-weight:600}
+.pt{background:#e53935;color:#fff;border-radius:50%;width:26px;height:26px;text-align:center;line-height:22px;font-weight:700;border:2px solid #fff;box-shadow:0 1px 4px #0006}
+.panel{background:#fff;border-radius:14px;padding:10px;margin-top:8px;border:2px solid #c8e6c9}
+.res small{font-weight:400;font-size:12px;color:#555}
+.res .v{text-align:right}
+.bar button.on{background:#ef6c00}
+.dagtip{background:#fff8e1;border:1px solid #ef6c00;color:#e65100;font-weight:700;padding:1px 6px;border-radius:6px}
+@media print{.back,.bar,button{display:none!important}}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="home">
+  <div class="top">
+    <h1>🌾 <span data-t="appname">West Bengal Land Expert</span></h1>
+    <div class="row">
+      <select id="lang" onchange="setLang()">
+        <option value="bn">বাংলা</option><option value="hi">हिन्दी</option><option value="en">English</option>
+      </select>
+      <span id="gpsStatus">GPS: --</span>
+    </div>
+  </div>
+  <div class="grid">
+    <div class="card big" onclick="show('survey')"><span class="ic">📍</span><span data-t="survey">GPS Survey</span></div>
+    <div class="card" onclick="show('survey')"><span class="ic">🗺️</span><span data-t="livemap">Live Map</span></div>
+    <div class="card" onclick="show('mouza')"><span class="ic">📜</span><span data-t="mouza">Mouza Map</span></div>
+    <div class="card" onclick="show('calc')"><span class="ic">🧮</span><span data-t="calc">Land Calculator</span></div>
+    <div class="card" onclick="show('conv')"><span class="ic">🔄</span><span data-t="conv">Land Converter</span></div>
+    <div class="card" onclick="show('divide')"><span class="ic">✂️</span><span data-t="divide">Land Division</span></div>
+    <div class="card" onclick="show('saved')"><span class="ic">💾</span><span data-t="saved">Saved Projects</span></div>
+    <div class="card" onclick="show('report')"><span class="ic">📄</span><span data-t="report">Land Report</span></div>
+    <div class="card yellow" onclick="show('settings')"><span class="ic">⚙️</span><span data-t="settings">Settings</span></div>
+  </div>
+</div>
+
+<!-- SURVEY -->
+<div id="survey" class="screen hidden">
+  <button class="back" onclick="show('home')">← <span data-t="back">Back</span></button>
+  <div class="bar">
+    <button onclick="startGPS()">📡 <span data-t="gpson">GPS চালু</span></button>
+    <button class="blue" onclick="toggleLayer()">🛰️ <span id="layerName">Map</span></button>
+  </div>
+  <div id="map"></div>
+  <div id="acc">Accuracy: --</div>
+  <div class="bar">
+    <button onclick="addCorner()">➕ <span data-t="addcorner">Add Corner</span></button>
+    <button onclick="undo()">↩️ Undo</button>
+    <button class="red" onclick="clearAll()">🗑️ <span data-t="delall">Delete All</span></button>
+  </div>
+  <div class="bar">
+    <button onclick="closeShape()">✅ <span data-t="close">Close Boundary</span></button>
+    <button onclick="saveProject()">💾 <span data-t="save">Save</span></button>
+  </div>
+  <div class="panel">
+    <b data-t="dagtitle"></b>
+    <div class="note" style="color:#555" data-t="mzhelp"></div>
+    <div class="bar">
+      <button class="blue" onclick="mzFit()">📌 <span data-t="mzfit"></span></button>
+      <button onclick="mzMove(0,1)">⬆️</button><button onclick="mzMove(0,-1)">⬇️</button>
+      <button onclick="mzMove(-1,0)">⬅️</button><button onclick="mzMove(1,0)">➡️</button>
+    </div>
+    <div class="bar">
+      <button onclick="mzScale(1.5)">🔍＋＋</button><button onclick="mzScale(1.1)">🔍＋</button>
+      <button onclick="mzScale(0.9)">🔍－</button><button onclick="mzScale(0.67)">🔍－－</button>
+    </div>
+    <div class="bar">
+      <button onclick="mzRotate(-3)">⟲ 3°</button><button onclick="mzRotate(3)">⟳ 3°</button>
+      <button onclick="mouzaOpacity(0.1)">◐＋</button><button onclick="mouzaOpacity(-0.1)">◐－</button>
+    </div>
+    <div class="bar">
+      <button id="dagBtn" onclick="startDag()">✏️ <span data-t="dagdraw"></span></button>
+      <button onclick="finishDag()">✔️ <span data-t="dagfinish"></span></button>
+      <button onclick="undoDagPt()">↩️</button><button class="red" onclick="cancelDag()">✖</button>
+    </div>
+    <div id="dagHint" class="note" style="color:#e65100"></div>
+    <div id="dagList"></div>
+  </div>
+  <div class="note" data-t="gpsnote"></div>
+  <div class="res" id="surveyRes"></div>
+</div>
+
+<!-- MOUZA -->
+<div id="mouza" class="screen hidden">
+  <button class="back" onclick="show('home')">← <span data-t="back">Back</span></button>
+  <h3 data-t="mouza">Mouza Map</h3>
+  <p style="font-size:14px;line-height:1.5" data-t="mouzahelp"></p>
+  <input type="file" id="mouzaFile" accept="image/*" onchange="loadMouza(this)">
+  <div class="bar">
+    <button onclick="mouzaOpacity(-0.1)">− Opacity</button>
+    <button onclick="mouzaOpacity(0.1)">+ Opacity</button>
+    <button class="blue" onclick="show('survey')">🗺️ <span data-t="livemap">Live Map</span></button>
+  </div>
+  <div class="note" data-t="mouzanote"></div>
+</div>
+
+<!-- CALCULATOR -->
+<div id="calc" class="screen hidden">
+  <button class="back" onclick="show('home')">← <span data-t="back">Back</span></button>
+  <h3 data-t="calc">Land Calculator</h3>
+  <input id="cl" type="number" step="any" data-p="length">
+  <input id="cw" type="number" step="any" data-p="width">
+  <select id="cunit" class="f">
+    <option value="ft">ফুট / Feet</option><option value="m">মিটার / Meter</option>
+  </select>
+  <button class="btn" onclick="calcLW()" data-t="calcbtn"></button>
+  <div class="res" id="calcRes"></div>
+</div>
+
+<!-- CONVERTER -->
+<div id="conv" class="screen hidden">
+  <button class="back" onclick="show('home')">← <span data-t="back">Back</span></button>
+  <h3 data-t="conv">Land Converter</h3>
+  <input id="cv" type="number" step="any" data-p="amount">
+  <select id="cu" class="f"></select>
+  <button class="btn" onclick="convert()" data-t="convbtn"></button>
+  <div class="res" id="convRes"></div>
+</div>
+
+<!-- DIVISION -->
+<div id="divide" class="screen hidden">
+  <button class="back" onclick="show('home')">← <span data-t="back">Back</span></button>
+  <h3 data-t="divide">Land Division</h3>
+  <input id="da" type="number" step="any" data-p="totalshatak">
+  <input id="dn" type="number" step="any" data-p="parts">
+  <button class="btn" onclick="divideEq()" data-t="diveq"></button>
+  <input id="dp" type="number" step="any" data-p="fixedshatak">
+  <button class="btn" onclick="divideFix()" data-t="divfix"></button>
+  <div class="res" id="divRes"></div>
+</div>
+
+<!-- SAVED -->
+<div id="saved" class="screen hidden">
+  <button class="back" onclick="show('home')">← <span data-t="back">Back</span></button>
+  <h3 data-t="saved">Saved Projects</h3>
+  <div id="savedList"></div>
+</div>
+
+<!-- REPORT -->
+<div id="report" class="screen hidden">
+  <button class="back" onclick="show('home')">← <span data-t="back">Back</span></button>
+  <h3 data-t="report">Land Report</h3>
+  <div class="res" id="reportBody"></div>
+  <button class="btn" onclick="window.print()">📄 <span data-t="pdf">PDF Save / Print</span></button>
+</div>
+
+<!-- SETTINGS -->
+<div id="settings" class="screen hidden">
+  <button class="back" onclick="show('home')">← <span data-t="back">Back</span></button>
+  <h3 data-t="settings">Settings</h3>
+  <label data-t="mainunit"></label>
+  <select id="mainUnit" class="f" onchange="saveSettings()">
+    <option value="shatak">শতক</option><option value="katha">কাঠা</option><option value="bigha">বিঘা</option><option value="acre">একর</option>
+  </select>
+  <label data-t="bighatype"></label>
+  <select id="bighaType" class="f" onchange="saveSettings()">
+    <option value="14400">১ বিঘা = ১৪৪০০ বর্গফুট (২০ কাঠা)</option>
+    <option value="17424">১ বিঘা = ১৭৪২৪ বর্গফুট (৪০ শতক)</option>
+  </select>
+  <div class="note" data-t="unitnote"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ============ TRANSLATIONS ============
+const T={
+bn:{appname:"West Bengal Land Expert",survey:"GPS Survey",livemap:"Live Map",mouza:"Mouza Map",calc:"Land Calculator",conv:"Land Converter",divide:"Land Division",saved:"Saved Projects",report:"Land Report",settings:"Settings",back:"পিছনে",gpson:"GPS চালু",layer:"স্যাটেলাইট / ম্যাপ",addcorner:"কোণা যোগ",delall:"সব মুছুন",close:"সীমানা বন্ধ",save:"সেভ",
+gpsnote:"পয়েন্ট টেনে সঠিক জায়গায় বসানো যাবে। GPS-এ কিছুটা ভুল হতে পারে, তাই Accuracy দেখুন। এই মাপ প্রাথমিক হিসাবের জন্য; সরকারি জমির সীমানা নির্ধারণের বিকল্প নয়।",
+mouzahelp:"আপনার মৌজা ম্যাপের ছবি আপলোড করুন। তারপর লাইভ ম্যাপে সেটি স্বচ্ছভাবে বসিয়ে জমির সীমানা মেলাতে পারবেন।",
+mouzanote:"ছবিটি ম্যাপের বর্তমান দৃশ্যের ওপর বসবে। Live Map-এ গিয়ে জুম করে মেলান। সরকারি মৌজা ম্যাপের জন্য banglarbhumi.gov.in দেখুন।",
+calcbtn:"হিসাব করুন",convbtn:"রূপান্তর",diveq:"সমান ভাগ",divfix:"নির্দিষ্ট পরিমাণ বাদ দিন",pdf:"PDF সেভ / প্রিন্ট",
+length:"দৈর্ঘ্য",width:"প্রস্থ",amount:"পরিমাণ",totalshatak:"মোট জমি (শতক)",parts:"কয় ভাগ?",fixedshatak:"নির্দিষ্ট অংশ (শতক)",
+mainunit:"প্রধান একক",bighatype:"বিঘার মান",unitnote:"পশ্চিমবঙ্গে সাধারণত ১ বিঘা = ৩৩ শতক (প্রায় ১৪৪০০ বর্গফুট)। এলাকাভেদে মান আলাদা হতে পারে, তাই নিজের এলাকার মান বেছে নিন।",
+sqft:"বর্গফুট",sqm:"বর্গমিটার",shatak:"শতক",katha:"কাঠা",bigha:"বিঘা",acre:"একর",perim:"পরিসীমা (মিটার)",points:"পয়েন্ট সংখ্যা",each:"প্রতি ভাগ",given:"নির্দিষ্ট অংশ",rest:"বাকি",dagtitle:"মৌজা ম্যাপ ও দাগ",dagdraw:"দাগ আঁকুন",dagfinish:"দাগ সম্পূর্ণ",daghint:"ম্যাপে দাগের প্রতিটি কোণায় ট্যাপ করুন, শেষ হলে 'দাগ সম্পূর্ণ' চাপুন।",dagprompt:"দাগ নম্বর লিখুন:",dagwhich:"কোন কোন দাগ পড়ছে",dagofland:"জমির",dagofdag:"দাগের",dagother:"দাগের বাইরে / অন্য",dagnone:"মাপা জমি কোনো দাগের সঙ্গে মেলেনি",daglist:"আঁকা দাগ",dag:"দাগ",dagnote:"দাগের হিসাব আনুমানিক; মৌজা ম্যাপ ঠিকমতো মেলানোর ওপর নির্ভর করে।",mzhelp:"মৌজা ছবি মেলান: সরান, বড়-ছোট করুন, ঘোরান। প্রথমে ম্যাপ জুম করে জমির জায়গায় আনুন, তারপর 'এখানে বসান' চাপুন।",mzfit:"এখানে বসান",mzfirst:"আগে মৌজা ম্যাপের ছবি আপলোড করুন"},
+hi:{appname:"West Bengal Land Expert",survey:"GPS सर्वे",livemap:"लाइव मैप",mouza:"मौजा मैप",calc:"भूमि कैलकुलेटर",conv:"भूमि कन्वर्टर",divide:"भूमि विभाजन",saved:"सेव प्रोजेक्ट",report:"भूमि रिपोर्ट",settings:"सेटिंग्स",back:"वापस",gpson:"GPS चालू",layer:"सैटेलाइट / मैप",addcorner:"कोना जोड़ें",delall:"सब हटाएं",close:"सीमा बंद करें",save:"सेव",
+gpsnote:"पॉइंट को खींचकर सही जगह रखा जा सकता है। GPS में थोड़ी गलती हो सकती है, इसलिए Accuracy देखें। यह माप केवल प्रारंभिक हिसाब के लिए है; सरकारी सीमा निर्धारण का विकल्प नहीं।",
+mouzahelp:"अपने मौजा मैप की फोटो अपलोड करें। फिर लाइव मैप पर उसे पारदर्शी रूप से रखकर सीमा मिलाएं।",
+mouzanote:"फोटो मैप के वर्तमान दृश्य पर बैठेगी। Live Map में जाकर ज़ूम करके मिलाएं।",
+calcbtn:"हिसाब करें",convbtn:"बदलें",diveq:"बराबर भाग",divfix:"निर्दिष्ट मात्रा घटाएं",pdf:"PDF सेव / प्रिंट",
+length:"लंबाई",width:"चौड़ाई",amount:"मात्रा",totalshatak:"कुल जमीन (शतक)",parts:"कितने भाग?",fixedshatak:"निर्दिष्ट हिस्सा (शतक)",
+mainunit:"मुख्य इकाई",bighatype:"बीघा का मान",unitnote:"पश्चिम बंगाल में आमतौर पर 1 बीघा = 33 शतक (लगभग 14400 वर्गफुट)। इलाके के अनुसार मान अलग हो सकता है।",
+sqft:"वर्गफुट",sqm:"वर्गमीटर",shatak:"शतक",katha:"काठा",bigha:"बीघा",acre:"एकड़",perim:"परिमाप (मीटर)",points:"पॉइंट संख्या",each:"प्रति भाग",given:"निर्दिष्ट हिस्सा",rest:"बाकी",dagtitle:"मौजा मैप और दाग",dagdraw:"दाग बनाएं",dagfinish:"दाग पूरा",daghint:"मैप पर दाग के हर कोने पर टैप करें, फिर 'दाग पूरा' दबाएं।",dagprompt:"दाग नंबर लिखें:",dagwhich:"कौन-कौन से दाग आ रहे हैं",dagofland:"जमीन का",dagofdag:"दाग का",dagother:"दाग के बाहर / अन्य",dagnone:"मापी गई जमीन किसी दाग से नहीं मिली",daglist:"बनाए गए दाग",dag:"दाग",dagnote:"दाग का हिसाब अनुमानित है; मौजा मैप को सही मिलाने पर निर्भर करता है।",mzhelp:"मौजा फोटो मिलाएं: खिसकाएं, बड़ा-छोटा करें, घुमाएं। पहले मैप ज़ूम करके जमीन की जगह लाएं, फिर 'यहाँ बैठाएं' दबाएं।",mzfit:"यहाँ बैठाएं",mzfirst:"पहले मौजा मैप की फोटो अपलोड करें"},
+en:{appname:"West Bengal Land Expert",survey:"GPS Survey",livemap:"Live Map",mouza:"Mouza Map",calc:"Land Calculator",conv:"Land Converter",divide:"Land Division",saved:"Saved Projects",report:"Land Report",settings:"Settings",back:"Back",gpson:"Start GPS",layer:"Satellite / Map",addcorner:"Add Corner",delall:"Delete All",close:"Close Boundary",save:"Save",
+gpsnote:"Drag points to correct them. GPS can be off by a few metres, so watch the accuracy. This is a preliminary estimate and not a substitute for an official boundary survey.",
+mouzahelp:"Upload a photo of your mouza map, then overlay it semi-transparently on the live map to compare boundaries.",
+mouzanote:"The image is placed over the current map view. Go to Live Map and zoom to align it.",
+calcbtn:"Calculate",convbtn:"Convert",diveq:"Divide equally",divfix:"Subtract fixed portion",pdf:"Save PDF / Print",
+length:"Length",width:"Width",amount:"Amount",totalshatak:"Total land (shatak)",parts:"Number of parts",fixedshatak:"Fixed portion (shatak)",
+mainunit:"Main unit",bighatype:"Bigha value",unitnote:"In West Bengal 1 bigha is commonly 33 shatak (about 14400 sq ft). Values vary by area, so pick the one for yours.",
+sqft:"Sq ft",sqm:"Sq m",shatak:"Shatak",katha:"Katha",bigha:"Bigha",acre:"Acre",perim:"Perimeter (m)",points:"Points",each:"Each part",given:"Fixed portion",rest:"Remaining",dagtitle:"Mouza map & dags",dagdraw:"Draw dag",dagfinish:"Finish dag",daghint:"Tap each corner of the dag on the map, then press 'Finish dag'.",dagprompt:"Enter dag number:",dagwhich:"Dags falling in this land",dagofland:"of land",dagofdag:"of dag",dagother:"Outside dags / other",dagnone:"The surveyed land does not overlap any drawn dag",daglist:"Drawn dags",dag:"Dag",dagnote:"Dag split is approximate and depends on how well the mouza map is aligned.",mzhelp:"Align the mouza image: move, scale, rotate. First zoom the map to your plot, then press Fit here.",mzfit:"Fit here",mzfirst:"Upload a mouza map image first"}
+};
+let LANG=localStorage.getItem('lang')||'bn';
+const tr=k=>(T[LANG]&&T[LANG][k])||T.en[k]||k;
+function applyLang(){
+  document.documentElement.lang=LANG;
+  document.querySelectorAll('[data-t]').forEach(e=>{e.textContent=tr(e.dataset.t)});
+  document.querySelectorAll('[data-p]').forEach(e=>{e.placeholder=tr(e.dataset.p)});
+  fillConverter();
+  document.getElementById('lang').value=LANG;
+  if(typeof renderDagList==='function')renderDagList();
+}
+function setLang(){LANG=document.getElementById('lang').value;localStorage.setItem('lang',LANG);applyLang();}
+
+// ============ UNITS (base: sq ft) ============
+function bighaSqft(){return +(localStorage.getItem('bighaSqft')||14400);}
+function unitSqft(k){
+  switch(k){
+    case 'shatak':return 435.6;
+    case 'katha':return 720;
+    case 'bigha':return bighaSqft();
+    case 'acre':return 43560;
+    case 'sqft':return 1;
+    case 'sqm':return 10.7639;
+  }
+}
+const UNIT_KEYS=['shatak','katha','bigha','acre','sqft','sqm'];
+function resultsHTML(sqft,perimeterM){
+  let h='';
+  UNIT_KEYS.forEach(k=>{h+=`<div><span>${tr(k)}</span><span class="v">${(sqft/unitSqft(k)).toFixed(3)}</span></div>`});
+  if(perimeterM!=null)h+=`<div><span>${tr('perim')}</span><span class="v">${perimeterM.toFixed(2)}</span></div>`;
+  return h;
+}
+
+// ============ NAVIGATION ============
+function show(id){
+  document.querySelectorAll('#home,.screen').forEach(e=>e.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  if(id==='survey')setTimeout(initMap,80);
+  if(id==='saved')renderSaved();
+  if(id==='report')renderReport();
+  window.scrollTo(0,0);
+}
+
+// ============ CALCULATOR / CONVERTER / DIVISION ============
+function calcLW(){
+  let l=+document.getElementById('cl').value,w=+document.getElementById('cw').value;
+  if(!l||!w)return;
+  if(document.getElementById('cunit').value==='m'){l*=3.28084;w*=3.28084;}
+  document.getElementById('calcRes').innerHTML=resultsHTML(l*w,2*(l+w)*0.3048);
+}
+function fillConverter(){
+  const s=document.getElementById('cu'),cur=s.value;
+  s.innerHTML='';
+  UNIT_KEYS.forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=tr(k);s.appendChild(o)});
+  if(cur)s.value=cur;
+}
+function convert(){
+  const v=+document.getElementById('cv').value,u=document.getElementById('cu').value;
+  if(!v)return;
+  document.getElementById('convRes').innerHTML=resultsHTML(v*unitSqft(u),null);
+}
+function divideEq(){
+  const a=+document.getElementById('da').value,n=+document.getElementById('dn').value;
+  if(!a||!n)return;
+  document.getElementById('divRes').innerHTML=`<div><span>${tr('each')}</span><span class="v">${(a/n).toFixed(3)} ${tr('shatak')}</span></div>`;
+}
+function divideFix(){
+  const a=+document.getElementById('da').value,p=+document.getElementById('dp').value;
+  if(!a||!p)return;
+  document.getElementById('divRes').innerHTML=`<div><span>${tr('given')}</span><span class="v">${p} ${tr('shatak')}</span></div><div><span>${tr('rest')}</span><span class="v">${(a-p).toFixed(3)} ${tr('shatak')}</span></div>`;
+}
+
+// ============ MAP & GPS ============
+let map,osm,sat,goog,layerIdx=0,myMarker,accCircle,watchId=null,curPos=null,curAcc=null;
+let points=[],markers=[],poly=null,closed=false,mouzaOverlay=null,mouzaOp=0.6,mouzaURL=null;
+
+function initMap(){
+  if(map){map.invalidateSize();return;}
+  map=L.map('map',{maxZoom:23}).setView([22.9868,87.855],8);
+  osm=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:23,maxNativeZoom:19,attribution:'© OpenStreetMap'});
+  sat=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:23,maxNativeZoom:18,attribution:'Esri'});
+  goog=L.tileLayer('https://mt{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{subdomains:'0123',maxZoom:23,maxNativeZoom:20,attribution:'Google'});
+  osm.addTo(map);
+  map.on('click',e=>{if(dagMode){dagPts.push([e.latlng.lat,e.latlng.lng]);drawDagTemp();}});
+  renderDags();
+  if(mz)placeMouza();
+}
+function toggleLayer(){
+  if(!map)return;
+  const all=[osm,sat,goog];
+  all.forEach(l=>{if(map.hasLayer(l))map.removeLayer(l);});
+  layerIdx=(layerIdx+1)%3;
+  all[layerIdx].addTo(map);
+  const names=['Map','Satellite (Esri)','Satellite (Google)'];
+  document.getElementById('acc').dataset.layer=names[layerIdx];
+  const lb=document.getElementById('layerName');if(lb)lb.textContent=names[layerIdx];
+}
+function startGPS(){
+  if(!navigator.geolocation){alert('GPS not supported');return;}
+  if(watchId!==null)return;
+  watchId=navigator.geolocation.watchPosition(p=>{
+    curPos=[p.coords.latitude,p.coords.longitude];curAcc=p.coords.accuracy;
+    document.getElementById('gpsStatus').textContent='GPS: ON';
+    document.getElementById('acc').textContent='Accuracy: ±'+curAcc.toFixed(1)+' m';
+    if(!myMarker){
+      myMarker=L.circleMarker(curPos,{radius:9,color:'#fff',weight:3,fillColor:'#1976d2',fillOpacity:1}).addTo(map);
+      accCircle=L.circle(curPos,{radius:curAcc,color:'#1976d2',weight:1,fillOpacity:0.1}).addTo(map);
+      map.setView(curPos,18);
+    }else{myMarker.setLatLng(curPos);accCircle.setLatLng(curPos).setRadius(curAcc);}
+  },e=>{
+    document.getElementById('gpsStatus').textContent='GPS: OFF';
+    alert('GPS error: '+e.message);watchId=null;
+  },{enableHighAccuracy:true,maximumAge:0,timeout:20000});
+}
+function addCorner(){
+  if(!curPos){alert('Start GPS first / আগে GPS চালু করুন');return;}
+  if(closed){alert('Boundary already closed');return;}
+  points.push({ll:[...curPos],acc:curAcc});
+  redraw();
+}
+function undo(){if(closed)closed=false;else points.pop();redraw();}
+function clearAll(){if(confirm('Delete all points?')){points=[];closed=false;redraw();}}
+function closeShape(){
+  if(points.length<3){alert('Minimum 3 corners');return;}
+  closed=true;redraw();
+}
+function redraw(){
+  if(!map)return;
+  markers.forEach(m=>map.removeLayer(m));markers=[];
+  if(poly){map.removeLayer(poly);poly=null;}
+  points.forEach((p,i)=>{
+    const m=L.marker(p.ll,{draggable:true,icon:L.divIcon({className:'',html:`<div class="pt">${i+1}</div>`,iconSize:[26,26],iconAnchor:[13,13]})}).addTo(map);
+    m.on('drag',()=>{points[i].ll=[m.getLatLng().lat,m.getLatLng().lng];updatePoly();showSurveyResult(true);});
+    m.on('dragend',()=>{points[i].acc=null;redraw();});
+    markers.push(m);
+  });
+  updatePoly();
+  showSurveyResult();
+}
+function updatePoly(){
+  if(poly){map.removeLayer(poly);poly=null;}
+  const lls=points.map(p=>p.ll);
+  if(lls.length>=2){
+    poly=closed?L.polygon(lls,{color:'#2e7d32',weight:3,fillColor:'#66bb6a',fillOpacity:0.4}):L.polyline(lls,{color:'#2e7d32',weight:3});
+    poly.addTo(map);
+  }
+}
+// local projection + shoelace
+function areaPerim(lls){
+  const R=6371008.8,lat0=lls.reduce((s,p)=>s+p[0],0)/lls.length*Math.PI/180;
+  const xy=lls.map(p=>[R*(p[1]*Math.PI/180)*Math.cos(lat0),R*(p[0]*Math.PI/180)]);
+  let a=0,per=0;
+  for(let i=0;i<xy.length;i++){
+    const j=(i+1)%xy.length;
+    a+=xy[i][0]*xy[j][1]-xy[j][0]*xy[i][1];
+    per+=Math.hypot(xy[j][0]-xy[i][0],xy[j][1]-xy[i][1]);
+  }
+  return{sqm:Math.abs(a)/2,per};
+}
+function showSurveyResult(fast){
+  const box=document.getElementById('surveyRes');
+  let html=`<div><span>${tr('points')}</span><span class="v">${points.length}</span></div>`;
+  if(points.length>=3){const r=areaPerim(points.map(p=>p.ll));html+=resultsHTML(r.sqm*10.7639,r.per);}
+  html+=dagResultHTML(fast);
+  box.innerHTML=html;
+}
+
+// ============ MOUZA OVERLAY (move / scale / rotate) ============
+let mz=null;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function loadMouza(inp){
+  const f=inp.files[0];if(!f)return;
+  const rd=new FileReader();
+  rd.onload=e=>{
+    const im=new Image();
+    im.onload=()=>{
+      const sc=Math.min(1,1600/Math.max(im.width,im.height));
+      const cv=document.createElement('canvas');
+      cv.width=Math.round(im.width*sc);cv.height=Math.round(im.height*sc);
+      cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);
+      mz={img:cv,url0:cv.toDataURL('image/jpeg',0.9),angle:0,k:1};
+      if(mouzaOverlay&&map){map.removeLayer(mouzaOverlay);mouzaOverlay=null;}
+      show('survey');
+      setTimeout(()=>{initMap();placeMouza();},150);
+    };
+    im.src=e.target.result;
+  };
+  rd.readAsDataURL(f);
+}
+function placeMouza(){
+  if(!map||!mz)return;
+  if(mz.cLat===undefined){
+    const sz=map.getSize(),a=mz.img.width/mz.img.height;
+    const dw=Math.min(sz.x*0.8,sz.y*0.8*a),dh=dw/a;
+    const nw=map.containerPointToLatLng([sz.x/2-dw/2,sz.y/2-dh/2]);
+    const se=map.containerPointToLatLng([sz.x/2+dw/2,sz.y/2+dh/2]);
+    mz.cLat=(nw.lat+se.lat)/2;mz.cLng=(nw.lng+se.lng)/2;
+    mz.hLat0=(nw.lat-se.lat)/2;mz.hLng0=(se.lng-nw.lng)/2;mz.k=1;
+  }
+  updateMouza();
+}
+function updateMouza(){
+  if(!map||!mz||mz.cLat===undefined)return;
+  const w=mz.img.width,h=mz.img.height,ang=mz.angle*Math.PI/180;
+  let url=mz.url0,fw=1,fh=1;
+  if(mz.angle%360!==0){
+    const c=Math.abs(Math.cos(ang)),s=Math.abs(Math.sin(ang));
+    const W=Math.ceil(w*c+h*s),H=Math.ceil(w*s+h*c);
+    const cv=document.createElement('canvas');cv.width=W;cv.height=H;
+    const g=cv.getContext('2d');g.translate(W/2,H/2);g.rotate(ang);g.drawImage(mz.img,-w/2,-h/2);
+    url=cv.toDataURL('image/png');fw=W/w;fh=H/h;
+  }
+  const hl=mz.hLat0*mz.k*fh,hn=mz.hLng0*mz.k*fw;
+  const b=[[mz.cLat-hl,mz.cLng-hn],[mz.cLat+hl,mz.cLng+hn]];
+  if(mouzaOverlay){mouzaOverlay.setUrl(url);mouzaOverlay.setBounds(b);}
+  else mouzaOverlay=L.imageOverlay(url,b,{opacity:mouzaOp,interactive:false}).addTo(map);
+}
+function needMz(){if(!mz){alert(tr('mzfirst'));return false;}return true;}
+function mzFit(){if(!needMz())return;mz.cLat=undefined;placeMouza();}
+function mzMove(dx,dy){
+  if(!needMz()||mz.cLat===undefined)return;
+  mz.cLng+=dx*0.04*mz.hLng0*mz.k;mz.cLat+=dy*0.04*mz.hLat0*mz.k;updateMouza();
+}
+function mzScale(f){if(!needMz())return;mz.k*=f;updateMouza();}
+function mzRotate(d){if(!needMz())return;mz.angle+=d;updateMouza();}
+function mouzaOpacity(d){
+  mouzaOp=Math.min(1,Math.max(0.1,mouzaOp+d));
+  if(mouzaOverlay)mouzaOverlay.setOpacity(mouzaOp);
+}
+
+// ============ DAG DRAWING ============
+let dags=JSON.parse(localStorage.getItem('wbleDags')||'[]'),dagMode=false,dagPts=[],dagLayers=[],dagTemp=null,dagTempMk=[];
+function saveDags(){localStorage.setItem('wbleDags',JSON.stringify(dags));}
+function drawDagTemp(){
+  if(!map)return;
+  if(dagTemp){map.removeLayer(dagTemp);dagTemp=null;}
+  dagTempMk.forEach(m=>map.removeLayer(m));dagTempMk=[];
+  dagPts.forEach(p=>dagTempMk.push(L.circleMarker(p,{radius:5,color:'#fff',weight:2,fillColor:'#ef6c00',fillOpacity:1,interactive:false}).addTo(map)));
+  if(dagPts.length>=2)dagTemp=L.polyline(dagPts,{color:'#ef6c00',weight:3,dashArray:'6 6',interactive:false}).addTo(map);
+  document.getElementById('dagHint').textContent=dagMode?tr('daghint'):'';
+  document.getElementById('dagBtn').classList.toggle('on',dagMode);
+}
+function startDag(){if(!map)return;dagMode=true;dagPts=[];drawDagTemp();}
+function undoDagPt(){dagPts.pop();drawDagTemp();}
+function cancelDag(){dagMode=false;dagPts=[];drawDagTemp();}
+function finishDag(){
+  if(!dagMode){return;}
+  if(dagPts.length<3){alert('Minimum 3 corners');return;}
+  const no=prompt(tr('dagprompt'),'');
+  if(!no)return;
+  dags.push({no:no.trim(),pts:dagPts.map(p=>[p[0],p[1]])});
+  saveDags();dagMode=false;dagPts=[];drawDagTemp();
+  renderDags();showSurveyResult();
+}
+function renderDags(){
+  if(map){
+    dagLayers.forEach(l=>map.removeLayer(l));dagLayers=[];
+    dags.forEach(d=>{
+      const pg=L.polygon(d.pts,{color:'#ef6c00',weight:2,fillColor:'#ffb300',fillOpacity:0.15,interactive:false}).addTo(map);
+      pg.bindTooltip(tr('dag')+' '+d.no,{permanent:true,direction:'center',className:'dagtip'});
+      dagLayers.push(pg);
+    });
+  }
+  renderDagList();
+}
+function renderDagList(){
+  const b=document.getElementById('dagList');if(!b)return;
+  if(!dags.length){b.innerHTML='';return;}
+  b.innerHTML='<b>'+tr('daglist')+'</b>'+dags.map((d,i)=>`<div class="item"><div><b>${tr('dag')} ${esc(d.no)}</b><br><small>${(areaPerim(d.pts).sqm*10.7639/435.6).toFixed(2)} ${tr('shatak')}</small></div><div><button onclick="zoomDag(${i})">🔍</button> <button style="background:#e53935" onclick="delDag(${i})">✕</button></div></div>`).join('');
+}
+function zoomDag(i){if(map)map.fitBounds(dags[i].pts);}
+function delDag(i){
+  if(!confirm(tr('dag')+' '+dags[i].no+' ?'))return;
+  dags.splice(i,1);saveDags();renderDags();showSurveyResult();
+}
+
+// ============ DAG OVERLAP (which dags fall inside the surveyed land) ============
+function inPoly(x,y,P){
+  let ins=false;
+  for(let i=0,j=P.length-1;i<P.length;j=i++){
+    const xi=P[i][0],yi=P[i][1],xj=P[j][0],yj=P[j][1];
+    if(((yi>y)!==(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi)+xi))ins=!ins;
+  }
+  return ins;
+}
+function overlapSqm(A,B,N){
+  N=N||300;
+  const all=A.concat(B),R=6371008.8,lat0=all.reduce((s,p)=>s+p[0],0)/all.length*Math.PI/180;
+  const prj=l=>l.map(p=>[R*(p[1]*Math.PI/180)*Math.cos(lat0),R*(p[0]*Math.PI/180)]);
+  const a=prj(A),b=prj(B);
+  const bb=l=>[Math.min(...l.map(p=>p[0])),Math.min(...l.map(p=>p[1])),Math.max(...l.map(p=>p[0])),Math.max(...l.map(p=>p[1]))];
+  const ba=bb(a),bq=bb(b);
+  const x0=Math.max(ba[0],bq[0]),y0=Math.max(ba[1],bq[1]),x1=Math.min(ba[2],bq[2]),y1=Math.min(ba[3],bq[3]);
+  if(x1<=x0||y1<=y0)return 0;
+  const dx=(x1-x0)/N,dy=(y1-y0)/N;let c=0;
+  for(let i=0;i<N;i++){
+    const x=x0+(i+0.5)*dx;
+    for(let j=0;j<N;j++){
+      const y=y0+(j+0.5)*dy;
+      if(inPoly(x,y,a)&&inPoly(x,y,b))c++;
+    }
+  }
+  return c*dx*dy;
+}
+function dagResultHTML(fast){
+  if(points.length<3||!dags.length)return '';
+  const land=areaPerim(points.map(p=>p.ll)).sqm;
+  const rows=[];let tot=0;
+  dags.forEach(d=>{
+    const o=overlapSqm(points.map(p=>p.ll),d.pts,fast?80:300);
+    if(o>0.5){
+      const da=areaPerim(d.pts).sqm;
+      tot+=o;rows.push({no:d.no,o,pl:o/land*100,pd:o/da*100});
+    }
+  });
+  let h=`<h4 style="margin:10px 0 4px">${tr('dagwhich')}</h4>`;
+  if(!rows.length)return h+`<p style="font-size:14px">${tr('dagnone')}</p>`;
+  rows.sort((x,y)=>y.o-x.o);
+  rows.forEach(r=>{
+    h+=`<div><span><b>${tr('dag')} ${esc(r.no)}</b><br><small>${r.pd.toFixed(0)}% ${tr('dagofdag')}</small></span><span class="v">${(r.o*10.7639/435.6).toFixed(3)} ${tr('shatak')}<br><small>${r.pl.toFixed(0)}% ${tr('dagofland')}</small></span></div>`;
+  });
+  const rest=Math.max(0,land-tot);
+  if(rest>0.5)h+=`<div><span>${tr('dagother')}</span><span class="v">${(rest*10.7639/435.6).toFixed(3)} ${tr('shatak')}</span></div>`;
+  h+=`<p class="note">${tr('dagnote')}</p>`;
+  return h;
+}
+
+// ============ SAVE / LOAD ============
+function getSaved(){return JSON.parse(localStorage.getItem('wbleProjects')||'[]');}
+function saveProject(){
+  if(points.length<3){alert('Minimum 3 points');return;}
+  const name=prompt('Name / নাম:','জমি '+(getSaved().length+1));if(!name)return;
+  const r=areaPerim(points.map(p=>p.ll));
+  const list=getSaved();
+  list.push({name,date:new Date().toLocaleString(),points,sqm:r.sqm,per:r.per});
+  localStorage.setItem('wbleProjects',JSON.stringify(list));
+  alert('Saved ✔');
+}
+function renderSaved(){
+  const list=getSaved(),box=document.getElementById('savedList');
+  if(!list.length){box.innerHTML='<p>—</p>';return;}
+  box.innerHTML=list.map((p,i)=>`<div class="item"><div><b>${p.name}</b><br><small>${p.date} • ${(p.sqm*10.7639/435.6).toFixed(2)} ${tr('shatak')}</small></div><div><button onclick="loadProject(${i})">▶</button> <button style="background:#e53935" onclick="delProject(${i})">✕</button></div></div>`).join('');
+}
+function loadProject(i){
+  const p=getSaved()[i];points=p.points;closed=true;show('survey');
+  setTimeout(()=>{initMap();redraw();map.fitBounds(points.map(x=>x.ll));},250);
+}
+function delProject(i){const l=getSaved();l.splice(i,1);localStorage.setItem('wbleProjects',JSON.stringify(l));renderSaved();}
+
+// ============ REPORT ============
+function renderReport(){
+  const b=document.getElementById('reportBody');
+  if(points.length<3){b.innerHTML='<p>GPS Survey → Add Corner ×3+</p>';return;}
+  const r=areaPerim(points.map(p=>p.ll));
+  let h='<h4>'+tr('report')+' – '+new Date().toLocaleString()+'</h4>'+resultsHTML(r.sqm*10.7639,r.per);
+  h+=dagResultHTML();
+  h+='<h4 style="margin-top:8px">Corners (Lat, Lng)</h4>';
+  points.forEach((p,i)=>{h+=`<div><span>#${i+1}</span><span>${p.ll[0].toFixed(6)}, ${p.ll[1].toFixed(6)} (±${p.acc?p.acc.toFixed(1):'-'} m)</span></div>`});
+  h+='<p class="note">'+tr('gpsnote')+'</p>';
+  b.innerHTML=h;
+}
+
+// ============ SETTINGS ============
+function saveSettings(){
+  localStorage.setItem('mainUnit',document.getElementById('mainUnit').value);
+  localStorage.setItem('bighaSqft',document.getElementById('bighaType').value);
+}
+document.getElementById('mainUnit').value=localStorage.getItem('mainUnit')||'shatak';
+document.getElementById('bighaType').value=localStorage.getItem('bighaSqft')||'14400';
+applyLang();
+</script>
+</body>
+</html>
